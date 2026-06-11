@@ -1,0 +1,1087 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chingono &amp; Associates — Client Portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   Chingono & Associates — Client Portal
+   Light-luxe Web 3.0 · ivory / navy / gold · dark-mode toggle
+   Family tree + documents wired to /api/portal/<ref>.
+   ============================================================ */
+:root{
+  --bg:#f6f3ec; --bg-2:#efe9dc;
+  --panel:rgba(255,255,255,0.72); --panel-solid:#fffdf9;
+  --stroke:rgba(28,42,86,0.10); --stroke-strong:rgba(193,156,89,0.45);
+  --navy:#1b2a55; --navy-soft:#3a4d80;
+  --txt:#222a3d; --txt-dim:#5c6680; --txt-faint:#8a93a8;
+  --gold:#c19c59; --gold-bright:#d8b46e; --gold-soft:rgba(193,156,89,0.12);
+  --green:#3f9d77; --amber:#c98a2e; --red:#c2566a; --blue:#3f6fb0;
+  --radius:20px; --radius-sm:13px;
+  --shadow:0 24px 60px -34px rgba(27,42,85,0.35);
+  --shadow-sm:0 10px 30px -22px rgba(27,42,85,0.4);
+  --glow:radial-gradient(circle at 70% 20%,rgba(216,180,110,0.18),transparent 60%);
+}
+[data-theme="dark"]{
+  --bg:#0c1226; --bg-2:#0a0f20;
+  --panel:rgba(26,35,66,0.55); --panel-solid:#141b34;
+  --stroke:rgba(216,180,110,0.14); --stroke-strong:rgba(216,180,110,0.4);
+  --navy:#e9edf8; --navy-soft:#aab4d4;
+  --txt:#e9edf8; --txt-dim:#9aa3c4; --txt-faint:#646e96;
+  --gold:#d8b46e; --gold-bright:#ecc987; --gold-soft:rgba(216,180,110,0.10);
+  --green:#5fd0a3; --amber:#e6b65c; --red:#e07d7d; --blue:#7da9e0;
+  --shadow:0 24px 60px -30px rgba(0,0,0,0.8);
+  --shadow-sm:0 12px 34px -24px rgba(0,0,0,0.85);
+  --glow:radial-gradient(circle at 70% 20%,rgba(216,180,110,0.16),transparent 55%);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%}
+body{font-family:'Outfit',system-ui,sans-serif;background:var(--bg);color:var(--txt);
+  -webkit-font-smoothing:antialiased;min-height:100vh;transition:background .5s ease,color .3s ease}
+.bg{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.bg::before{content:"";position:absolute;width:55vw;height:55vw;right:-12vw;top:-15vw;border-radius:50%;
+  background:radial-gradient(circle,rgba(216,180,110,0.22),transparent 65%);filter:blur(50px)}
+.bg::after{content:"";position:absolute;width:48vw;height:48vw;left:-15vw;bottom:-18vw;border-radius:50%;
+  background:radial-gradient(circle,rgba(27,42,85,0.10),transparent 65%);filter:blur(60px)}
+[data-theme="dark"] .bg::after{background:radial-gradient(circle,rgba(60,90,170,0.18),transparent 65%)}
+.grain{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.4;mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E")}
+[data-theme="dark"] .grain{mix-blend-mode:screen;opacity:.5}
+
+.app{position:relative;z-index:2;display:grid;grid-template-columns:268px 1fr;gap:26px;
+  max-width:1320px;margin:0 auto;padding:22px 26px 60px;min-height:100vh}
+
+/* sidebar */
+.side{display:flex;flex-direction:column;gap:16px;position:sticky;top:22px;height:fit-content}
+.side-card{background:var(--panel);border:1px solid var(--stroke);border-radius:var(--radius);
+  backdrop-filter:blur(20px);box-shadow:var(--shadow-sm)}
+.crest{padding:26px 22px 22px;text-align:center;border-bottom:1px solid var(--stroke)}
+.crest .mark{width:62px;height:62px;margin:0 auto 12px}
+.crest .mark svg{width:62px;height:62px}
+.crest h1{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:600;letter-spacing:3px;color:var(--navy)}
+.crest .sub{font-size:9.5px;letter-spacing:3.5px;color:var(--gold);margin-top:3px;text-transform:uppercase}
+.nav{padding:14px 12px;display:flex;flex-direction:column;gap:2px}
+.nav button{display:flex;align-items:center;gap:13px;width:100%;padding:11px 14px;border-radius:12px;
+  background:transparent;border:none;color:var(--txt-dim);font:inherit;font-size:14px;cursor:pointer;
+  text-align:left;transition:all .2s ease;position:relative}
+.nav button svg{width:18px;height:18px;flex:0 0 18px;opacity:.7}
+.nav button:hover{background:var(--gold-soft);color:var(--navy)}
+.nav button.active{background:linear-gradient(100deg,var(--gold-soft),transparent);color:var(--navy);font-weight:500}
+.nav button.active::before{content:"";position:absolute;left:0;top:50%;transform:translateY(-50%);
+  width:3px;height:20px;background:linear-gradient(var(--gold),var(--gold-bright));border-radius:3px}
+.nav button.active svg{opacity:1;color:var(--gold)}
+.nav .badge{margin-left:auto;font-size:10px;background:var(--red);color:#fff;border-radius:99px;
+  min-width:18px;height:18px;padding:0 5px;display:grid;place-items:center;font-weight:600}
+.fam-mini{padding:16px 18px}
+.fam-mini .row{display:flex;align-items:center;justify-content:space-between;margin-bottom:11px}
+.fam-mini .row .lab{font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:600;color:var(--navy)}
+.fam-mini .row a{font-size:12px;color:var(--gold);text-decoration:none;display:flex;align-items:center;gap:4px;cursor:pointer}
+.fam-mini .who{display:flex;align-items:center;gap:10px;color:var(--txt-dim);font-size:13px}
+.fam-mini .who svg{width:18px;height:18px;color:var(--gold)}
+.profile{padding:14px 16px;display:flex;align-items:center;gap:12px;cursor:pointer}
+.profile .pic{width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,var(--gold),#9c7b3f);
+  display:grid;place-items:center;color:#fff;font-weight:600;font-size:14px;flex:0 0 42px;box-shadow:var(--shadow-sm)}
+.profile .pn{font-weight:600;font-size:14px;color:var(--navy)}
+.profile .pid{font-size:11px;color:var(--txt-faint);margin-top:1px}
+.profile .chev{margin-left:auto;color:var(--txt-faint)}
+
+/* main */
+.main{min-width:0}
+.topbar{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px;gap:18px}
+.greet .hi{font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:600;color:var(--navy);line-height:1.05;letter-spacing:.3px}
+.greet .hi .nm{font-style:italic}
+.greet p{color:var(--txt-dim);font-size:14.5px;margin-top:6px}
+.tools{display:flex;align-items:center;gap:10px}
+.icbtn{width:42px;height:42px;border-radius:13px;background:var(--panel);border:1px solid var(--stroke);
+  display:grid;place-items:center;cursor:pointer;color:var(--txt-dim);position:relative;backdrop-filter:blur(12px);transition:all .2s}
+.icbtn:hover{color:var(--navy);border-color:var(--stroke-strong)}
+.icbtn svg{width:18px;height:18px}
+.icbtn .ping{position:absolute;top:9px;right:10px;width:7px;height:7px;border-radius:50%;background:var(--gold);box-shadow:0 0 0 3px var(--bg)}
+
+.view{display:none;animation:fade .45s cubic-bezier(.2,.7,.3,1)}
+.view.show{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+
+.layout{display:grid;grid-template-columns:1fr 312px;gap:22px;align-items:start}
+.col-main{display:flex;flex-direction:column;gap:22px;min-width:0}
+.col-side{display:flex;flex-direction:column;gap:18px}
+
+.hero{position:relative;overflow:hidden;border:1px solid var(--stroke);border-radius:var(--radius);
+  background:var(--panel-solid);box-shadow:var(--shadow);padding:34px 36px;display:grid;grid-template-columns:1fr 220px;gap:20px;align-items:center}
+.hero::before{content:"";position:absolute;inset:0;background:var(--glow);pointer-events:none}
+.hero .eyebrow{font-size:10.5px;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold);font-weight:600}
+.hero h2{font-family:'Cormorant Garamond',serif;font-size:33px;font-weight:700;color:var(--navy);margin:10px 0 12px;line-height:1.05}
+.hero p{color:var(--txt-dim);font-size:14px;max-width:42ch;line-height:1.55}
+.hero .cta{margin-top:20px;display:inline-flex;align-items:center;gap:10px;background:var(--navy);color:#fff;
+  border:none;font:inherit;font-size:14px;font-weight:500;padding:13px 22px;border-radius:12px;cursor:pointer;transition:all .2s;box-shadow:var(--shadow-sm)}
+[data-theme="dark"] .hero .cta{background:linear-gradient(135deg,var(--gold),#9c7b3f);color:#0c1226}
+.hero .cta:hover{transform:translateY(-2px)}
+.hero .cta svg{width:16px;height:16px}
+.crest-art{position:relative;display:grid;place-items:center}
+.crest-art svg{width:170px;height:170px;filter:drop-shadow(0 16px 30px rgba(193,156,89,.35))}
+.crest-art .halo{position:absolute;width:150px;height:150px;border-radius:50%;
+  background:radial-gradient(circle,rgba(216,180,110,.3),transparent 65%);filter:blur(18px);animation:pulse 5s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:.5;transform:scale(.95)}50%{opacity:1;transform:scale(1.08)}}
+
+.progress-card{background:var(--panel);border:1px solid var(--stroke);border-radius:var(--radius);
+  backdrop-filter:blur(16px);padding:22px 26px;box-shadow:var(--shadow-sm)}
+.progress-card .ph{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:11px}
+.progress-card .ph .t{font-size:13.5px;color:var(--txt-dim)}
+.progress-card .ph .pc{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:700;color:var(--gold)}
+.bar{height:9px;border-radius:9px;background:var(--bg-2);overflow:hidden}
+[data-theme="dark"] .bar{background:rgba(255,255,255,.06)}
+.bar i{display:block;height:100%;border-radius:9px;background:linear-gradient(90deg,var(--gold),var(--gold-bright));width:0;transition:width 1.1s cubic-bezier(.3,.8,.3,1)}
+.nextline{margin-top:14px;display:flex;align-items:center;gap:10px;font-size:13.5px;color:var(--txt-dim)}
+.nextline svg{width:17px;height:17px;color:var(--gold);flex:0 0 17px}
+.nextline b{color:var(--navy);font-weight:600}
+
+.glance-head{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:var(--navy);margin:2px 0 14px}
+.tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.tile{background:var(--panel);border:1px solid var(--stroke);border-radius:var(--radius-sm);padding:18px;
+  backdrop-filter:blur(14px);box-shadow:var(--shadow-sm);transition:all .25s}
+.tile:hover{transform:translateY(-3px);border-color:var(--stroke-strong)}
+.tile .ti{width:34px;height:34px;border-radius:10px;background:var(--gold-soft);display:grid;place-items:center;margin-bottom:14px}
+.tile .ti svg{width:17px;height:17px;color:var(--gold)}
+.tile .num{font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:700;color:var(--navy);line-height:1}
+.tile .lab{font-size:13px;font-weight:600;color:var(--txt);margin-top:6px}
+.tile .meta{font-size:11.5px;color:var(--txt-faint);margin-top:3px}
+.tile .link{font-size:12px;color:var(--gold);margin-top:11px;display:flex;align-items:center;gap:5px;cursor:pointer}
+
+.card{background:var(--panel);border:1px solid var(--stroke);border-radius:var(--radius);backdrop-filter:blur(16px);box-shadow:var(--shadow-sm)}
+.pad{padding:24px 26px}
+.sec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px}
+.sec-head h3{font-family:'Cormorant Garamond',serif;font-size:21px;font-weight:600;color:var(--navy)}
+.sec-sub{color:var(--txt-dim);font-size:13px;margin-bottom:20px;line-height:1.5}
+
+.panel-title{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600;color:var(--navy);margin-bottom:4px}
+.qa{display:flex;align-items:center;gap:13px;padding:13px;border-radius:13px;cursor:pointer;transition:all .18s;border:1px solid transparent}
+.qa:hover{background:var(--gold-soft);border-color:var(--stroke)}
+.qa .qi{width:38px;height:38px;border-radius:11px;background:var(--gold-soft);display:grid;place-items:center;flex:0 0 38px}
+.qa .qi svg{width:17px;height:17px;color:var(--gold)}
+.qa .grow{flex:1;min-width:0}
+.qa .qt{font-size:13.5px;font-weight:600;color:var(--navy)}
+.qa .qs{font-size:11.5px;color:var(--txt-faint);margin-top:2px;line-height:1.35}
+.qa .arr{color:var(--txt-faint)}.qa .arr svg{width:15px;height:15px}
+
+.legal-hero{display:flex;gap:12px;align-items:center;padding:4px 0 16px;border-bottom:1px solid var(--stroke);margin-bottom:14px}
+.legal-hero .lp{width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,var(--navy),var(--navy-soft));display:grid;place-items:center;color:#fff;flex:0 0 46px}
+[data-theme="dark"] .legal-hero .lp{background:linear-gradient(135deg,var(--gold),#9c7b3f);color:#0c1226}
+.legal-hero .lp svg{width:22px;height:22px}
+.legal-hero h4{font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:600;color:var(--navy)}
+.legal-hero p{font-size:12px;color:var(--txt-dim);margin-top:2px;line-height:1.4}
+.legal-row{display:flex;align-items:center;gap:12px;padding:11px 0}
+.legal-row .lr-ic{width:32px;height:32px;border-radius:9px;background:var(--gold-soft);display:grid;place-items:center;flex:0 0 32px}
+.legal-row .lr-ic svg{width:15px;height:15px;color:var(--gold)}
+.legal-row .grow{flex:1}
+.legal-row .lt{font-size:13px;font-weight:600;color:var(--navy)}
+.legal-row .ls{font-size:11.5px;color:var(--txt-faint);margin-top:1px}
+
+.review{display:flex;align-items:center;gap:16px;padding:18px 22px}
+.review .shield{width:44px;height:44px;border-radius:12px;background:var(--gold-soft);display:grid;place-items:center;flex:0 0 44px}
+.review .shield svg{width:22px;height:22px;color:var(--gold)}
+.review .grow{flex:1}
+.review .rt{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:600;color:var(--navy)}
+.review .rs{font-size:12.5px;color:var(--txt-dim);margin-top:2px}
+.review .rbtn{border:1px solid var(--stroke-strong);color:var(--gold);background:var(--gold-soft);
+  font:inherit;font-size:13px;font-weight:600;padding:10px 18px;border-radius:11px;cursor:pointer;transition:all .18s;white-space:nowrap}
+.review .rbtn:hover{background:var(--gold);color:#fff}
+
+.journey{display:flex;flex-direction:column}
+.jrow{display:flex;gap:15px}
+.jrow .rail{flex:0 0 26px;display:flex;flex-direction:column;align-items:center}
+.jdot{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;border:2px solid var(--stroke-strong);background:var(--panel-solid);flex:0 0 26px}
+.jdot svg{width:13px;height:13px;color:#fff;opacity:0}
+.jrow.done .jdot{background:linear-gradient(135deg,var(--gold),#9c7b3f);border-color:transparent}
+.jrow.done .jdot svg{opacity:1}
+.jrow.current .jdot{border-color:var(--gold-bright);box-shadow:0 0 0 4px var(--gold-soft)}
+.jline{width:2px;flex:1;background:var(--stroke);min-height:14px}
+.jrow:last-child .jline{display:none}
+.jbody{padding-bottom:18px;flex:1}
+.jbody .t{font-size:14px;font-weight:600;color:var(--navy)}
+.jrow.done .jbody .t{color:var(--txt-dim);font-weight:500}
+.jrow.current .jbody .t{color:var(--gold)}
+.jbody .n{font-size:12px;color:var(--txt-faint);margin-top:2px}
+.jtag{font-size:9.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);margin-top:4px;font-weight:600}
+
+.tree{padding:14px 0 4px;overflow-x:auto}
+.gen{display:flex;justify-content:center;gap:26px;flex-wrap:wrap;position:relative}
+.gen + .gen{margin-top:48px}
+.gen + .gen::before{content:"";position:absolute;top:-32px;left:50%;width:2px;height:32px;background:var(--stroke-strong);transform:translateX(-50%)}
+.node{width:196px;background:var(--panel-solid);border:1px solid var(--stroke);border-radius:15px;padding:15px;position:relative;box-shadow:var(--shadow-sm);transition:all .25s}
+.node:hover{transform:translateY(-3px);border-color:var(--stroke-strong)}
+.node.deceased{border-color:var(--stroke-strong);background:linear-gradient(135deg,var(--gold-soft),transparent)}
+.node.gone{opacity:.66}
+.node .nm{font-weight:600;font-size:14px;color:var(--navy);display:flex;align-items:center;gap:7px}
+.node .rel{font-size:11.5px;color:var(--txt-dim);margin-top:3px}
+.node .nt{font-size:11px;color:var(--txt-faint);margin-top:9px;line-height:1.4}
+.node .shr{position:absolute;top:13px;right:13px;font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:700;color:var(--gold)}
+.spouse-link{display:flex;align-items:center}
+.spouse-link::after{content:"⚭";color:var(--gold);font-size:17px;align-self:center;margin:0 -11px;z-index:2;
+  background:var(--bg);border-radius:50%;width:24px;height:24px;display:grid;place-items:center;border:1px solid var(--stroke-strong)}
+.spouse-link .node:first-child{margin-right:15px}
+.spouse-link .node:last-child{margin-left:15px}
+.lifedot{width:7px;height:7px;border-radius:50%;display:inline-block}
+.tree-legend{display:flex;gap:20px;flex-wrap:wrap;margin-top:26px;padding-top:18px;border-top:1px solid var(--stroke);font-size:12px;color:var(--txt-dim)}
+.tree-legend span{display:flex;align-items:center;gap:7px}
+
+/* accounts & assets */
+.asset-row{display:flex;align-items:center;gap:15px;padding:15px 4px;border-top:1px solid var(--stroke)}
+.asset-row:first-child{border-top:none}
+.asset-ic{flex:0 0 42px;width:42px;height:42px;border-radius:12px;display:grid;place-items:center;background:var(--gold-soft);border:1px solid var(--stroke)}
+.asset-ic svg{width:19px;height:19px;color:var(--gold)}
+.asset-row .grow{flex:1;min-width:0}
+.asset-row .an{font-size:14px;font-weight:600;color:var(--navy)}
+.asset-row .am{font-size:11.5px;color:var(--txt-faint);margin-top:3px}
+.asset-row .av{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:700;color:var(--navy);white-space:nowrap}
+.asset-row .atype{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--txt-dim);background:var(--bg-2);border:1px solid var(--stroke);border-radius:7px;padding:3px 9px}
+[data-theme="dark"] .asset-row .atype{background:rgba(255,255,255,.05)}
+
+/* livestock */
+.ls-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:22px}
+.ls-card{background:var(--panel);border:1px solid var(--stroke);border-radius:var(--radius-sm);padding:18px;box-shadow:var(--shadow-sm);position:relative;overflow:hidden}
+.ls-card .lsi{width:38px;height:38px;border-radius:11px;background:var(--gold-soft);display:grid;place-items:center;margin-bottom:12px}
+.ls-card .lsi svg{width:21px;height:21px;color:var(--gold)}
+.ls-card .lh{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:700;color:var(--navy);line-height:1}
+.ls-card .lsp{font-size:13px;font-weight:600;color:var(--txt);margin-top:5px}
+.ls-card .lv{font-size:11.5px;color:var(--txt-faint);margin-top:3px}
+.herd{border:1px solid var(--stroke);border-radius:15px;padding:18px;margin-bottom:14px;background:var(--panel-solid);box-shadow:var(--shadow-sm)}
+.herd .htop{display:flex;align-items:flex-start;gap:14px}
+.herd .hic{flex:0 0 44px;width:44px;height:44px;border-radius:12px;display:grid;place-items:center;background:var(--gold-soft);border:1px solid var(--stroke)}
+.herd .hic svg{width:22px;height:22px;color:var(--gold)}
+.herd .grow{flex:1;min-width:0}
+.herd .hname{font-size:15px;font-weight:600;color:var(--navy)}
+.herd .hsub{font-size:11.5px;color:var(--txt-faint);margin-top:3px;line-height:1.5}
+.herd .hval{text-align:right;white-space:nowrap}
+.herd .hval .hh{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:700;color:var(--navy);line-height:1}
+.herd .hval .hsm{font-size:11px;color:var(--txt-faint);margin-top:3px}
+.herd .hmeta{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}
+.chiplet{font-size:11px;color:var(--txt-dim);background:var(--bg-2);border:1px solid var(--stroke);border-radius:8px;padding:4px 10px;display:inline-flex;align-items:center;gap:6px}
+[data-theme="dark"] .chiplet{background:rgba(255,255,255,.05)}
+.chiplet svg{width:12px;height:12px;color:var(--gold)}
+.statustag{font-size:10px;letter-spacing:1px;text-transform:uppercase;font-weight:600;padding:3px 9px;border-radius:7px}
+.statustag.in-estate{background:rgba(63,111,176,.12);color:var(--blue);border:1px solid rgba(63,111,176,.3)}
+.statustag.distributed{background:rgba(63,157,119,.12);color:var(--green);border:1px solid rgba(63,157,119,.3)}
+.statustag.sold,.statustag.deceased{background:var(--bg-2);color:var(--txt-faint);border:1px solid var(--stroke)}
+.hevents{margin-top:14px;padding-top:13px;border-top:1px solid var(--stroke)}
+.hevents .het{font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--txt-faint);margin-bottom:9px;font-weight:600}
+.ev{display:flex;align-items:center;gap:10px;padding:6px 0;font-size:12.5px;color:var(--txt-dim)}
+.ev .evd{flex:0 0 70px;font-size:11px;color:var(--txt-faint)}
+.ev .evdelta{font-family:'Cormorant Garamond',serif;font-weight:700;flex:0 0 34px;text-align:right}
+.ev .evdelta.pos{color:var(--green)}.ev .evdelta.neg{color:var(--red)}
+@media(max-width:680px){.ls-summary{grid-template-columns:1fr}.herd .htop{flex-wrap:wrap}}
+
+.docfilter{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+.docfilter button{background:var(--panel);border:1px solid var(--stroke);color:var(--txt-dim);
+  font:inherit;font-size:12.5px;padding:7px 15px;border-radius:99px;cursor:pointer;transition:all .15s}
+.docfilter button:hover{color:var(--navy)}
+.docfilter button.active{background:var(--navy);border-color:var(--navy);color:#fff}
+[data-theme="dark"] .docfilter button.active{background:linear-gradient(135deg,var(--gold),#9c7b3f);border-color:transparent;color:#0c1226}
+.doc{display:flex;align-items:center;gap:15px;padding:15px 4px;border-top:1px solid var(--stroke)}
+.doc:first-child{border-top:none}
+.docicon{flex:0 0 44px;width:44px;height:44px;border-radius:12px;display:grid;place-items:center;background:var(--gold-soft);border:1px solid var(--stroke)}
+.docicon svg{width:20px;height:20px;color:var(--gold)}
+.doc .grow{flex:1;min-width:0}
+.doc .dt{font-size:14px;font-weight:600;color:var(--navy)}
+.doc .dm{font-size:11.5px;color:var(--txt-faint);margin-top:3px}
+.doc .cat{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--txt-dim);background:var(--bg-2);border:1px solid var(--stroke);border-radius:7px;padding:3px 9px}
+[data-theme="dark"] .doc .cat{background:rgba(255,255,255,.05)}
+.docbtn{background:var(--panel);border:1px solid var(--stroke-strong);color:var(--gold);
+  font:inherit;font-size:12.5px;font-weight:600;padding:8px 15px;border-radius:11px;cursor:pointer;display:inline-flex;align-items:center;gap:7px;transition:all .15s;white-space:nowrap}
+.docbtn svg{width:14px;height:14px}
+.docbtn:hover{background:var(--gold);color:#fff}
+.docbtn.req{color:var(--red);border-color:rgba(194,86,106,.45)}
+.docbtn.req:hover{background:var(--red);color:#fff}
+.statpill{font-size:10.5px;font-weight:600;padding:4px 11px;border-radius:99px;white-space:nowrap}
+.statpill.pending{background:rgba(201,138,46,.12);color:var(--amber);border:1px solid rgba(201,138,46,.3)}
+.upload{margin-top:20px;border:1.5px dashed var(--stroke-strong);border-radius:15px;padding:24px;text-align:center;background:var(--gold-soft);cursor:pointer;transition:all .18s}
+.upload:hover{background:rgba(193,156,89,.18)}
+.upload svg{width:26px;height:26px;color:var(--gold);margin-bottom:8px}
+.upload .ut{font-size:13.5px;font-weight:600;color:var(--navy)}
+.upload .us{font-size:12px;color:var(--txt-faint);margin-top:4px}
+
+.banner{border-radius:14px;padding:13px 18px;font-size:13.5px;margin-bottom:20px;display:none;
+  background:rgba(194,86,106,.1);border:1px solid rgba(194,86,106,.3);color:var(--red)}
+.banner b{font-weight:700}
+.foot{margin-top:30px;padding-top:18px;border-top:1px solid var(--stroke);display:flex;justify-content:space-between;align-items:center;color:var(--txt-faint);font-size:12px;flex-wrap:wrap;gap:10px}
+.foot .links{display:flex;gap:20px}
+.foot .links a{color:var(--txt-faint);text-decoration:none}
+.foot .links a:hover{color:var(--gold)}
+.conn{display:inline-flex;align-items:center;gap:7px}
+.dot{width:7px;height:7px;border-radius:50%;display:inline-block}
+
+@media(max-width:1080px){
+  .app{grid-template-columns:1fr;padding:18px}
+  .side{position:static;flex-direction:row;flex-wrap:wrap;gap:12px}
+  .side-card{flex:1;min-width:240px}
+  .nav{flex-direction:row;flex-wrap:wrap}.nav button.active::before{display:none}
+  .layout{grid-template-columns:1fr}.tiles{grid-template-columns:repeat(2,1fr)}
+  .hero{grid-template-columns:1fr}.crest-art{display:none}
+}
+@media(max-width:560px){.tiles{grid-template-columns:1fr}.greet .hi{font-size:28px}
+  .spouse-link{flex-direction:column;gap:14px}.spouse-link::after{display:none}.spouse-link .node{margin:0!important}}
+
+/* language picker */
+.langwrap{position:relative}
+.langmenu{position:absolute;right:0;top:50px;background:var(--panel-solid);border:1px solid var(--stroke);
+  border-radius:14px;box-shadow:var(--shadow);padding:7px;min-width:210px;z-index:60;display:none;
+  max-height:340px;overflow-y:auto}
+.langmenu.open{display:block;animation:fade .2s ease}
+.langmenu button{display:flex;align-items:center;gap:10px;width:100%;padding:9px 12px;border:none;background:transparent;
+  border-radius:9px;font:inherit;font-size:13.5px;color:var(--txt);cursor:pointer;text-align:left;transition:all .15s}
+.langmenu button:hover{background:var(--gold-soft)}
+.langmenu button.active{background:var(--gold-soft);color:var(--navy);font-weight:600}
+.langmenu button .flag{font-size:11px;color:var(--txt-faint);margin-left:auto}
+.langmenu .lg-native{color:var(--navy);font-weight:500}
+
+/* digital twin map */
+.twin-live{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--txt-dim)}
+.twin-wrap{display:grid;grid-template-columns:1fr 270px;gap:18px;margin-top:6px}
+.twin-map{position:relative;border:1px solid var(--stroke);border-radius:16px;overflow:hidden;
+  background:linear-gradient(160deg,#eef3e6,#e4ecd9);min-height:430px}
+[data-theme="dark"] .twin-map{background:linear-gradient(160deg,#16203a,#101733)}
+.twin-map svg{display:block;width:100%;height:auto}
+.zone-label{font-family:'Outfit',sans-serif;font-size:8px;letter-spacing:.5px;text-transform:uppercase;font-weight:600}
+.twin-marker{cursor:pointer;transition:transform .15s}
+.twin-marker:hover{transform:scale(1.08)}
+.twin-side{display:flex;flex-direction:column;gap:12px}
+.twin-info{border:1px solid var(--stroke);border-radius:14px;padding:16px;background:var(--panel);box-shadow:var(--shadow-sm)}
+.twin-info .tih{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:600;color:var(--navy);display:flex;align-items:center;gap:8px}
+.twin-info .tih .sw{width:11px;height:11px;border-radius:3px}
+.twin-info .tirow{display:flex;justify-content:space-between;font-size:12.5px;padding:6px 0;border-top:1px solid var(--stroke);color:var(--txt-dim)}
+.twin-info .tirow:first-of-type{border-top:none;margin-top:6px}
+.twin-info .tirow b{color:var(--navy);font-weight:600}
+.twin-info .tihint{font-size:11.5px;color:var(--txt-faint);margin-top:8px;line-height:1.45}
+.twin-stat{border:1px solid var(--stroke);border-radius:14px;padding:14px 16px;background:var(--panel);box-shadow:var(--shadow-sm)}
+.twin-stat .tsh{font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--txt-faint);font-weight:600}
+.twin-stat .tsv{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:700;color:var(--navy);margin-top:4px}
+.twin-legend{display:flex;gap:18px;flex-wrap:wrap;margin-top:16px;padding-top:14px;border-top:1px solid var(--stroke);font-size:12px;color:var(--txt-dim)}
+.twin-legend span{display:flex;align-items:center;gap:7px}
+.twin-legend .sw{width:11px;height:11px;border-radius:3px;display:inline-block}
+@media(max-width:760px){.twin-wrap{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="bg"></div>
+<div class="grain"></div>
+
+<div class="app">
+  <aside class="side">
+    <div class="side-card">
+      <div class="crest">
+        <div class="mark">
+          <svg viewBox="0 0 64 64" fill="none">
+            <path d="M22 16l4 5 6-8 6 8 4-5 1.5 9h-23z" fill="var(--gold)" opacity=".9"/>
+            <circle cx="22" cy="15" r="1.6" fill="var(--gold)"/><circle cx="42" cy="15" r="1.6" fill="var(--gold)"/><circle cx="32" cy="7" r="1.8" fill="var(--gold)"/>
+            <path d="M32 26c6 2 10 2 13 1.5 0 13-5 20-13 23-8-3-13-10-13-23C24 28 26 28 32 26z" fill="none" stroke="var(--navy)" stroke-width="1.6"/>
+            <text x="32" y="46" text-anchor="middle" font-family="Cormorant Garamond, serif" font-size="20" font-weight="700" fill="var(--navy)">C</text>
+            <path d="M21 34c-2 3-2 7 0 10M43 34c2 3 2 7 0 10" stroke="var(--gold)" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <h1>CHINGONO</h1><div class="sub">&amp; Associates</div>
+      </div>
+      <nav class="nav" id="nav">
+        <button data-view="dash" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 11l9-8 9 8M5 9v11h14V9"/></svg><span data-i18n="nav_dashboard">Dashboard</span></button>
+        <button data-view="docs"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M6 3h8l5 5v13H6z"/><path d="M14 3v5h5"/></svg><span data-i18n="nav_docs">My Will Documents</span> <span class="badge" id="navDocBadge" style="display:none"></span></button>
+        <button data-view="estate"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 21h18M5 21V9l7-5 7 5v12M9 21v-6h6v6"/></svg><span data-i18n="nav_estate">My Estate</span></button>
+        <button data-view="family"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="6" r="2.4"/><circle cx="6" cy="17" r="2.4"/><circle cx="18" cy="17" r="2.4"/><path d="M12 8.4v3.6M12 12H6.5v2.6M12 12h5.5v2.6"/></svg><span data-i18n="nav_family">Family Tree</span></button>
+        <button data-view="assets"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 21h18M5 21V9l7-5 7 5v12"/></svg><span data-i18n="nav_assets">Accounts &amp; Assets</span></button>
+        <button data-view="livestock"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 9c0-1 1-2 2-2 1 0 1 1 2 1s1-1 2-1 1 1 2 1 1-1 2-1 1 1 2 1 1-1 2-1c1 0 2 1 2 2 0 3-2 5-2 7H6c0-2-2-4-2-7z"/><path d="M7 16v3M17 16v3M10 16v2M14 16v2"/></svg><span data-i18n="nav_livestock">Livestock</span></button>
+        <button data-view="family"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="9" cy="8" r="3"/><path d="M3 20a6 6 0 0112 0M17 6a3 3 0 010 6"/></svg><span data-i18n="nav_beneficiaries">Beneficiaries</span></button>
+        <button data-view="estate"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 11l3 3 5-5"/></svg><span data-i18n="nav_tasks">Tasks &amp; Reminders</span></button>
+        <button data-view="legal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 5h16v12H8l-4 4z"/></svg><span data-i18n="nav_messages">Messages</span></button>
+        <button data-view="legal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 14a8 8 0 0116 0M4 14v2a2 2 0 002 2M20 14v2a2 2 0 01-2 2h-2"/></svg><span data-i18n="nav_legal">Legal Support</span></button>
+        <button data-view="dash"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 5h16M4 12h16M4 19h10"/></svg><span data-i18n="nav_resources">Resources</span></button>
+        <button id="logoutBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M10 17l5-5-5-5M15 12H3M13 4h6v16h-6"/></svg><span data-i18n="nav_signout">Sign out</span></button>
+      </nav>
+    </div>
+    <div class="side-card fam-mini">
+      <div class="row"><span class="lab" data-i18n="nav_family">Family Tree</span><a onclick="go('family')"><span data-i18n="view">View</span> <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>
+      <div class="who"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="9" cy="8" r="3"/><path d="M3 20a6 6 0 0112 0M17 6a3 3 0 010 6"/></svg><span id="famCount">— family members</span></div>
+    </div>
+    <div class="side-card profile" onclick="go('estate')">
+      <div class="pic" id="profPic">—</div>
+      <div><div class="pn" id="profName">—</div><div class="pid" id="profId">—</div></div>
+      <div class="chev"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div class="greet">
+        <div class="hi"><span data-i18n="welcome_back">Welcome back,</span> <span class="nm" id="greetName">…</span></div>
+        <p data-i18n="welcome_sub">We're here to help you protect what matters most.</p>
+      </div>
+      <div class="tools">
+        <div class="langwrap">
+          <button class="icbtn" id="langBtn" title="Language" onclick="toggleLangMenu(event)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 2.5 15.3 0 18M12 3c-2.5 2.7-2.5 15.3 0 18"/></svg></button>
+          <div class="langmenu" id="langMenu"></div>
+        </div>
+        <button class="icbtn" id="themeBtn" title="Toggle light / dark" onclick="toggleTheme()"><svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/></svg></button>
+        <button class="icbtn" title="Notifications"><span class="ping"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M6 9a6 6 0 1112 0c0 5 2 7 2 7H4s2-2 2-7"/><path d="M10 20a2 2 0 004 0"/></svg></button>
+        <button class="icbtn" title="Account"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="8" r="3.4"/><path d="M5 20a7 7 0 0114 0"/></svg></button>
+      </div>
+    </div>
+
+    <div class="banner" id="banner"></div>
+
+    <section class="view show" data-v="dash">
+      <div class="layout">
+        <div class="col-main">
+          <div class="hero">
+            <div>
+              <div class="eyebrow" data-i18n="estate_plan">Your Estate Plan</div>
+              <h2><span data-i18n="legacy_1">Your legacy.</span><br><span data-i18n="legacy_2">Your way.</span></h2>
+              <p data-i18n="hero_sub">Keep your will and estate plan up to date and give your loved ones lasting peace of mind.</p>
+              <button class="cta" onclick="go('docs')"><span data-i18n="review_will">Review My Will</span> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+            </div>
+            <div class="crest-art">
+              <div class="halo"></div>
+              <svg viewBox="0 0 120 120" fill="none">
+                <path d="M30 30l8 9 12-15 12 15 8-9 3 18H27z" fill="var(--gold-bright)" opacity=".95"/>
+                <path d="M60 48c11 3 18 3 24 2 0 24-9 37-24 42-15-5-24-18-24-42 6 1 13 1 24-2z" fill="var(--panel-solid)" stroke="var(--gold)" stroke-width="2"/>
+                <text x="60" y="86" text-anchor="middle" font-family="Cormorant Garamond, serif" font-size="38" font-weight="700" fill="var(--navy)">C</text>
+                <path d="M40 60c-3 6-3 14 0 20M80 60c3 6 3 14 0 20" stroke="var(--gold)" stroke-width="2" fill="none" stroke-linecap="round"/>
+              </svg>
+            </div>
+          </div>
+
+          <div class="progress-card">
+            <div class="ph"><span class="t" data-i18n="admin_progress">Administration progress</span><span class="pc" id="estPC">0%</span></div>
+            <div class="bar"><i id="estBar"></i></div>
+            <div class="nextline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span><span data-i18n="next_step">Next step:</span> <b id="estNext">—</b></span></div>
+          </div>
+
+          <div>
+            <div class="glance-head" data-i18n="at_a_glance">At a Glance</div>
+            <div class="tiles" id="tiles"></div>
+          </div>
+
+          <div class="card review">
+            <div class="shield"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/><path d="M9 12l2 2 4-4"/></svg></div>
+            <div class="grow"><div class="rt"><span data-i18n="last_reviewed">Your will was last reviewed on</span> <span id="reviewDate">—</span></div><div class="rs" data-i18n="review_advice">We recommend reviewing it annually or whenever major life changes occur.</div></div>
+            <button class="rbtn" onclick="go('docs')" data-i18n="review_now">Review Now</button>
+          </div>
+        </div>
+
+        <div class="col-side">
+          <div class="card pad">
+            <div class="panel-title" data-i18n="quick_actions">Quick Actions</div>
+            <div style="margin-top:10px">
+              <div class="qa" onclick="go('docs')"><div class="qi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M5 20h14"/></svg></div><div class="grow"><div class="qt" data-i18n="qa_upload">Upload New Document</div><div class="qs" data-i18n="qa_upload_s">Add a new will or codicil</div></div><span class="arr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></span></div>
+              <div class="qa" onclick="go('docs')"><div class="qi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M14 4l6 6L9 21H3v-6z"/></svg></div><div class="grow"><div class="qt" data-i18n="qa_edit">Edit My Will</div><div class="qs" data-i18n="qa_edit_s">Make changes to your existing will</div></div><span class="arr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></span></div>
+              <div class="qa" onclick="go('family')"><div class="qi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="9" cy="8" r="3"/><path d="M3 20a6 6 0 0112 0M17 6a3 3 0 010 6"/></svg></div><div class="grow"><div class="qt" data-i18n="qa_benef">Manage Beneficiaries</div><div class="qs" data-i18n="qa_benef_s">View or update beneficiaries</div></div><span class="arr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></span></div>
+              <div class="qa" onclick="go('estate')"><div class="qi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 21h18M5 21V9l7-5 7 5v12"/></svg></div><div class="grow"><div class="qt" data-i18n="qa_link">Link Account or Asset</div><div class="qs" data-i18n="qa_link_s">Add or update assets and accounts</div></div><span class="arr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></span></div>
+            </div>
+          </div>
+          <div class="card pad">
+            <div class="panel-title" data-i18n="legal_support">Legal Support</div>
+            <div class="legal-hero">
+              <div class="lp"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="3.4"/><path d="M5 20a7 7 0 0114 0"/></svg></div>
+              <div><h4 data-i18n="need_help">Need assistance?</h4><p data-i18n="need_help_s">Our legal team is here to support you.</p></div>
+            </div>
+            <div class="legal-row"><div class="lr-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 5h16v12H8l-4 4z"/></svg></div><div class="grow"><div class="lt" data-i18n="chat_lawyer">Chat with your Lawyer</div><div class="ls" data-i18n="chat_hours">Available Mon–Fri, 9am–5pm</div></div></div>
+            <div class="legal-row"><div class="lr-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M5 4h4l2 5-3 2a11 11 0 005 5l2-3 5 2v4a2 2 0 01-2 2A16 16 0 013 6a2 2 0 012-2z"/></svg></div><div class="grow"><div class="lt" data-i18n="call_back">Request a call back</div><div class="ls">+27 11 123 4567</div></div></div>
+            <div class="legal-row"><div class="lr-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 5h16v14H4z"/><path d="M4 7l8 6 8-6"/></svg></div><div class="grow"><div class="lt" data-i18n="email_us">Email Us</div><div class="ls" id="legalMail">—</div></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="view" data-v="estate">
+      <div class="card pad">
+        <div class="sec-head"><h3 data-i18n="estate_head">Where your estate stands</h3></div>
+        <div class="sec-sub" data-i18n="estate_sub">A plain-language view of each step in administering the estate. Completed steps are marked; the highlighted step is what we're working on now.</div>
+        <div class="journey" id="journey"></div>
+      </div>
+    </section>
+
+    <section class="view" data-v="family">
+      <div class="card pad">
+        <div class="sec-head"><h3 data-i18n="family_head">Family &amp; beneficiaries</h3></div>
+        <div class="sec-sub" data-i18n="family_sub">The family structure recorded for the estate, with each beneficiary's share of the residue. Where a child has predeceased, their share passes to their own children (per stirpes).</div>
+        <div class="tree" id="tree"></div>
+        <div class="tree-legend">
+          <span><span class="lifedot" style="background:var(--green)"></span> <span data-i18n="living">Living</span></span>
+          <span><span class="lifedot" style="background:var(--txt-faint)"></span> <span data-i18n="deceased">Deceased</span></span>
+          <span style="color:var(--gold)">⚭ <span data-i18n="married">Married</span></span>
+          <span><span style="font-family:'Cormorant Garamond',serif;font-weight:700;color:var(--gold)">2/9</span> <span data-i18n="share_residue">Share of residue</span></span>
+        </div>
+      </div>
+    </section>
+
+    <section class="view" data-v="assets">
+      <div class="card pad">
+        <div class="sec-head"><h3 data-i18n="assets_head">Accounts &amp; Assets</h3><span class="pc-asset" id="assetsTotal" style="font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:700;color:var(--gold)"></span></div>
+        <div class="sec-sub" data-i18n="assets_sub">The accounts, property and other assets recorded as part of the estate. Values are estimates pending the final liquidation &amp; distribution account.</div>
+        <div id="assetsList"></div>
+      </div>
+    </section>
+
+    <section class="view" data-v="livestock">
+      <div class="card pad">
+        <div class="sec-head"><h3 data-i18n="livestock_head">Livestock Register</h3><span id="lsTotal" style="font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:700;color:var(--gold)"></span></div>
+        <div class="sec-sub" data-i18n="livestock_sub">A dedicated register for cattle, goats and sheep held by the estate — a novel part of our estate-management service. Each herd is inventoried, valued and tracked through births, deaths and transfers until distribution to the heirs.</div>
+        <div class="ls-summary" id="lsSummary"></div>
+        <div id="lsList"></div>
+      </div>
+      <div class="card pad" style="margin-top:18px">
+        <div class="sec-head">
+          <h3 data-i18n="twin_head">Digital Twin — where the livestock are kept</h3>
+          <span class="twin-live"><span class="dot" style="background:var(--green)"></span> <span data-i18n="twin_live">Live view</span></span>
+        </div>
+        <div class="sec-sub" data-i18n="twin_sub">An interactive map of the kraal, grazing camps and water points. Markers show where each herd is kept; tap a herd or zone for details. Counts are linked to the register above.</div>
+        <div class="twin-wrap">
+          <div class="twin-map" id="twinMap"></div>
+          <div class="twin-side" id="twinSide"></div>
+        </div>
+        <div class="twin-legend" id="twinLegend"></div>
+      </div>
+    </section>
+
+    <section class="view" data-v="docs">
+      <div class="card pad">
+        <div class="sec-head"><h3 data-i18n="docs_head">My Will Documents</h3></div>
+        <div class="sec-sub" data-i18n="docs_sub">All documents relating to your estate in one secure place. Items marked in red need an action from you.</div>
+        <div class="docfilter" id="docfilter"></div>
+        <div id="doclist"></div>
+        <div class="upload" id="uploadZone">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M5 20h14"/></svg>
+          <div class="ut" data-i18n="upload_doc">Upload a document</div>
+          <div class="us" data-i18n="upload_doc_s">Add an ID, certificate or supporting document to your estate file</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="view" data-v="legal">
+      <div class="card pad">
+        <div class="sec-head"><h3 data-i18n="legal_head">Legal Support &amp; Messages</h3></div>
+        <div class="sec-sub"><span data-i18n="legal_sub">Reach your appointed attorney directly. Your matter is handled by</span> <b id="legalAtt2">—</b>.</div>
+        <div class="legal-hero" style="border:none;margin:0;padding:0 0 8px">
+          <div class="lp" style="width:54px;height:54px;flex-basis:54px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="3.4"/><path d="M5 20a7 7 0 0114 0"/></svg></div>
+          <div><h4 style="font-size:18px" data-i18n="need_help">Need assistance?</h4><p data-i18n="legal_hero_s">Our legal team is here to support you through every step of the estate.</p></div>
+        </div>
+        <div class="legal-row" style="border-top:1px solid var(--stroke)"><div class="lr-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 5h16v12H8l-4 4z"/></svg></div><div class="grow"><div class="lt" data-i18n="chat_lawyer">Chat with your Lawyer</div><div class="ls" data-i18n="chat_hours">Available Mon–Fri, 9am–5pm</div></div><button class="docbtn" onclick="alert('Opening secure chat with your attorney…')" data-i18n="start_chat">Start chat</button></div>
+        <div class="legal-row"><div class="lr-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M5 4h4l2 5-3 2a11 11 0 005 5l2-3 5 2v4a2 2 0 01-2 2A16 16 0 013 6a2 2 0 012-2z"/></svg></div><div class="grow"><div class="lt" data-i18n="call_back">Request a call back</div><div class="ls">+27 11 123 4567</div></div><button class="docbtn" onclick="alert('A member of the team will call you back.')" data-i18n="request">Request</button></div>
+        <div class="legal-row"><div class="lr-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 5h16v14H4z"/><path d="M4 7l8 6 8-6"/></svg></div><div class="grow"><div class="lt" data-i18n="email_us">Email Us</div><div class="ls" id="legalMail2">—</div></div><button class="docbtn" id="legalMailBtn" data-i18n="email">Email</button></div>
+      </div>
+    </section>
+
+    <div class="foot">
+      <div>© 2026 Chingono &amp; Associates · <span data-i18n="rights">All rights reserved</span> · <span class="conn" id="conn"><span class="dot" style="background:var(--txt-faint)"></span> Connecting…</span></div>
+      <div class="links"><a href="#" data-i18n="privacy">Privacy Policy</a><a href="#" data-i18n="terms">Terms of Service</a><a href="#" data-i18n="cookie">Cookie Policy</a></div>
+    </div>
+  </main>
+</div>
+
+<script>
+const API = null; /* standalone demo: always offline, no server, no login */
+
+/* ============================================================
+   Internationalisation (i18n)
+   - UI chrome translated across 11 languages.
+   - Sample estate DATA is also translated where reliable; for
+     Bemba/Lingala/Luganda some longer data strings remain in
+     English and are marked for native-speaker review.
+   ============================================================ */
+const LANGS = [
+  {code:'en', name:'English',   native:'English'},
+  {code:'sn', name:'Shona',     native:'ChiShona'},
+  {code:'xh', name:'Xhosa',     native:'isiXhosa'},
+  {code:'nd', name:'Ndebele',   native:'isiNdebele'},
+  {code:'st', name:'Sesotho',   native:'Sesotho'},
+  {code:'af', name:'Afrikaans', native:'Afrikaans'},
+  {code:'bem',name:'Bemba',     native:'Ichibemba'},
+  {code:'ln', name:'Lingala',   native:'Lingála'},
+  {code:'lg', name:'Luganda',   native:'Luganda'},
+  {code:'sw', name:'Swahili',   native:'Kiswahili'},
+  {code:'it', name:'Italian',   native:'Italiano'},
+];
+// UI chrome strings. Keys map to data-i18n attributes.
+const I18N = {
+  en:{welcome_back:"Welcome back,",welcome_sub:"We're here to help you protect what matters most.",
+    nav_dashboard:"Dashboard",nav_docs:"My Will Documents",nav_estate:"My Estate",nav_family:"Family Tree",nav_assets:"Accounts & Assets",nav_livestock:"Livestock",nav_beneficiaries:"Beneficiaries",nav_tasks:"Tasks & Reminders",nav_messages:"Messages",nav_legal:"Legal Support",nav_resources:"Resources",nav_signout:"Sign out",view:"View",
+    estate_plan:"Your Estate Plan",legacy_1:"Your legacy.",legacy_2:"Your way.",hero_sub:"Keep your will and estate plan up to date and give your loved ones lasting peace of mind.",review_will:"Review My Will",
+    admin_progress:"Administration progress",next_step:"Next step:",at_a_glance:"At a Glance",last_reviewed:"Your will was last reviewed on",review_advice:"We recommend reviewing it annually or whenever major life changes occur.",review_now:"Review Now",
+    quick_actions:"Quick Actions",qa_upload:"Upload New Document",qa_upload_s:"Add a new will or codicil",qa_edit:"Edit My Will",qa_edit_s:"Make changes to your existing will",qa_benef:"Manage Beneficiaries",qa_benef_s:"View or update beneficiaries",qa_link:"Link Account or Asset",qa_link_s:"Add or update assets and accounts",
+    legal_support:"Legal Support",need_help:"Need assistance?",need_help_s:"Our legal team is here to support you.",chat_lawyer:"Chat with your Lawyer",chat_hours:"Available Mon–Fri, 9am–5pm",call_back:"Request a call back",email_us:"Email Us",
+    estate_head:"Where your estate stands",estate_sub:"A plain-language view of each step in administering the estate. Completed steps are marked; the highlighted step is what we're working on now.",
+    family_head:"Family & beneficiaries",family_sub:"The family structure recorded for the estate, with each beneficiary's share of the residue. Where a child has predeceased, their share passes to their own children (per stirpes).",living:"Living",deceased:"Deceased",married:"Married",share_residue:"Share of residue",
+    assets_head:"Accounts & Assets",assets_sub:"The accounts, property and other assets recorded as part of the estate. Values are estimates pending the final liquidation & distribution account.",
+    livestock_head:"Livestock Register",livestock_sub:"A dedicated register for cattle, goats and sheep held by the estate — a novel part of our estate-management service. Each herd is inventoried, valued and tracked through births, deaths and transfers until distribution to the heirs.",
+    twin_head:"Digital Twin — where the livestock are kept",twin_live:"Live view",twin_sub:"An interactive map of the kraal, grazing camps and water points. Markers show where each herd is kept; tap a herd or zone for details. Counts are linked to the register above.",
+    docs_head:"My Will Documents",docs_sub:"All documents relating to your estate in one secure place. Items marked in red need an action from you.",upload_doc:"Upload a document",upload_doc_s:"Add an ID, certificate or supporting document to your estate file",
+    legal_head:"Legal Support & Messages",legal_sub:"Reach your appointed attorney directly. Your matter is handled by",legal_hero_s:"Our legal team is here to support you through every step of the estate.",start_chat:"Start chat",request:"Request",email:"Email",
+    rights:"All rights reserved",privacy:"Privacy Policy",terms:"Terms of Service",cookie:"Cookie Policy",
+    family_members:"family members",head:"head",head_of:"head ·",per_head:"/hd",recent_moves:"Recent movements",in_estate:"in estate",distributed:"distributed",sold:"sold",
+    sp_Cattle:"Cattle",sp_Goats:"Goats",sp_Sheep:"Sheep",
+    twin_total_head:"Total head on site",twin_zones:"Grazing zones",twin_water:"Water points",twin_tap:"Tap a marker to see herd details.",
+    custodian:"Custodian",location:"Location",earmark:"Earmark",value:"Value",
+    will_documents:"Will Documents",accounts_assets:"Accounts & Assets",livestock_lbl:"Livestock",beneficiaries_lbl:"Beneficiaries",last_updated:"Last updated",total:"Total",people_included:"People you've included",view_documents:"View Documents",view_accounts:"View Accounts",view_register:"View Register",view_beneficiaries:"View Beneficiaries",
+    required_you:"Required from you",being_prepared:"Being prepared by the firm",awaiting:"Awaiting",download:"Download",upload:"Upload",added:"added",by:"by",all:"All",
+    ev_birth:"Birth",ev_death:"Loss",ev_sale:"Sale",ev_transfer:"Transfer to heir",ev_count:"Count verified"},
+};
+let LANG='en';
+I18N.sn = {"welcome_back": "Mauya zvakare,", "welcome_sub": "Tiri pano kukubatsirai kuchengetedza zvinokosha kwamuri.", "nav_dashboard": "Dheshibhodi", "nav_docs": "Magwaro eWill Yangu", "nav_estate": "Nhaka Yangu", "nav_family": "Muti weMhuri", "nav_assets": "Maakaundi & Pfuma", "nav_livestock": "Zvipfuyo", "nav_beneficiaries": "Vanopiwa Nhaka", "nav_tasks": "Mabasa & Yeuchidziro", "nav_messages": "Mameseji", "nav_legal": "Rubatsiro Rwemutemo", "nav_resources": "Zviwanikwa", "nav_signout": "Buda", "view": "Ona", "estate_plan": "Hurongwa hweNhaka Yenyu", "legacy_1": "Nhaka yenyu.", "legacy_2": "Nzira yenyu.", "hero_sub": "Chengetedzai will nehurongwa hwenhaka huchigara huchivandudzwa, mupe vadiwa venyu rugare rwemoyo.", "review_will": "Ongorora Will Yangu", "admin_progress": "Kufambira mberi kwekutonga nhaka", "next_step": "Danho rinotevera:", "at_a_glance": "Pakuona Pakukasira", "last_reviewed": "Will yenyu yakapedzisira kuongororwa pa", "review_advice": "Tinokurudzira kuiongorora gore negore kana paine shanduko huru muupenyu.", "review_now": "Ongorora Izvozvi", "quick_actions": "Zviito Zvinokurumidza", "qa_upload": "Isa Gwaro Idzva", "qa_upload_s": "Wedzera will itsva kana codicil", "qa_edit": "Gadziridza Will Yangu", "qa_edit_s": "Ita shanduko pawill yako iripo", "qa_benef": "Tarisira Vanopiwa Nhaka", "qa_benef_s": "Ona kana kuvandudza vanopiwa nhaka", "qa_link": "Batanidza Akaundi kana Pfuma", "qa_link_s": "Wedzera kana kuvandudza pfuma nemaakaundi", "legal_support": "Rubatsiro Rwemutemo", "need_help": "Munoda rubatsiro?", "need_help_s": "Chikwata chedu chemutemo chiri pano kukutsigirai.", "chat_lawyer": "Kurukura neGweta renyu", "chat_hours": "Munogona Muvhuro–Chishanu, 9am–5pm", "call_back": "Kumbira kufonerwa", "email_us": "Titumire Email", "estate_head": "Pakamira nhaka yenyu", "estate_sub": "Maonero ari nyore edanho rega rega mukutonga nhaka. Matanho akapera akaiswa mucherechedzo; danho rakatariswa ndiro ratiri kushanda pariri iko zvino.", "family_head": "Mhuri & vanopiwa nhaka", "family_sub": "Chimiro chemhuri chakanyorwa chenhaka, nemugove wega wega wevanopiwa nhaka. Kana mwana akatanga kufa, mugove wake unoenda kuvana vake (per stirpes).", "living": "Vapenyu", "deceased": "Vakafa", "married": "Vakaroorana", "share_residue": "Mugove wenhaka", "assets_head": "Maakaundi & Pfuma", "assets_sub": "Maakaundi, dzimba neimwe pfuma yakanyorwa senhengo yenhaka. Mitengo iri fungidziro kusvika gwaro rekupedzisira rapera.", "livestock_head": "Rejista yeZvipfuyo", "livestock_sub": "Rejista yakatsaurirwa mombe, mbudzi nemakwai zvinochengetwa nenhaka — chinhu chitsva mubasa redu rekutonga nhaka. Boka rega rega rinonyorwa, richikoshwa uye richiteverwa kuburikidza nekuzvarwa, rufu nekutamiswa kusvika rapiwa vagari venhaka.", "twin_head": "Digital Twin — pachengetwa zvipfuyo", "twin_live": "Maonero epamwe", "twin_sub": "Mepu inoshanda yedanga, mafuro nenzvimbo dzemvura. Zviratidzo zvinoratidza kwakachengetwa boka rega rega; baya boka kana nzvimbo kuti uone zvakawanda. Nhamba dzakabatanidzwa nerejista iri pamusoro.", "docs_head": "Magwaro eWill Yangu", "docs_sub": "Magwaro ese ane chekuita nenhaka yenyu munzvimbo imwe yakachengeteka. Zvinhu zvakanyorwa zvitsvuku zvinoda chiito kubva kwamuri.", "upload_doc": "Isa gwaro", "upload_doc_s": "Wedzera chitupa, gwaro kana rumwe rutsigiro kufaira yenhaka yenyu", "legal_head": "Rubatsiro Rwemutemo & Mameseji", "legal_sub": "Svikai kugweta renyu rakagadzwa. Nyaya yenyu iri kubatwa na", "legal_hero_s": "Chikwata chedu chemutemo chiri pano kukutsigirai padanho rega rega renhaka.", "start_chat": "Tanga kukurukura", "request": "Kumbira", "email": "Email", "rights": "Kodzero dzese dzakachengetedzwa", "privacy": "Mutemo weZvakavanzika", "terms": "Mitemo yeBasa", "cookie": "Mutemo weCookie", "family_members": "nhengo dzemhuri", "recent_moves": "Kufamba kwemazuva ano", "in_estate": "munhaka", "distributed": "zvakagoverwa", "sold": "zvakatengeswa", "sp_Cattle": "Mombe", "sp_Goats": "Mbudzi", "sp_Sheep": "Makwai", "twin_total_head": "Huwandu hwese hwepanzvimbo", "twin_zones": "Nzvimbo dzemafuro", "twin_water": "Nzvimbo dzemvura", "twin_tap": "Baya chiratidzo kuti uone zvakawanda zveboka.", "custodian": "Muchengeti", "location": "Nzvimbo", "earmark": "Mucherechedzo", "value": "Kukosha", "will_documents": "Magwaro eWill", "accounts_assets": "Maakaundi & Pfuma", "livestock_lbl": "Zvipfuyo", "beneficiaries_lbl": "Vanopiwa Nhaka", "last_updated": "Kupedzisira kuvandudzwa", "total": "Zvese", "people_included": "Vanhu vamakaisa", "view_documents": "Ona Magwaro", "view_accounts": "Ona Maakaundi", "view_register": "Ona Rejista", "view_beneficiaries": "Ona Vanopiwa Nhaka", "required_you": "Zvinodiwa kwamuri", "being_prepared": "Zviri kugadzirwa nekambani", "awaiting": "Kumirira", "download": "Dhaunirodha", "upload": "Isa", "added": "yakawedzerwa", "by": "na", "all": "Zvese", "ev_birth": "Kuzvarwa", "ev_death": "Kurasikirwa", "ev_sale": "Kutengesa", "ev_transfer": "Kutamisira kumugari wenhaka", "ev_count": "Kuverenga kwasimbiswa"};
+I18N.xh = {"welcome_back": "Wamkelekile kwakhona,", "welcome_sub": "Silapha ukukunceda ukhusele oko kubalulekileyo kuwe.", "nav_dashboard": "Ideshibhodi", "nav_docs": "Amaxwebhu Omyolelo Wam", "nav_estate": "Ilifa Lam", "nav_family": "Umnombo Wosapho", "nav_assets": "Iiakhawunti & Iimpahla", "nav_livestock": "Imfuyo", "nav_beneficiaries": "Abaxhamli", "nav_tasks": "Imisebenzi & Izikhumbuzo", "nav_messages": "Imiyalezo", "nav_legal": "Inkxaso Yezomthetho", "nav_resources": "Izixhobo", "nav_signout": "Phuma", "view": "Jonga", "estate_plan": "Isicwangciso Selifa Lakho", "legacy_1": "Ilifa lakho.", "legacy_2": "Ngendlela yakho.", "hero_sub": "Gcina umyolelo nesicwangciso selifa sihlaziyiwe, unike abathandekayo bakho uxolo lwengqondo oluhlala luhleli.", "review_will": "Hlola Umyolelo Wam", "admin_progress": "Inkqubela yolawulo lwelifa", "next_step": "Inyathelo elilandelayo:", "at_a_glance": "Ngokukhawuleza", "last_reviewed": "Umyolelo wakho wagqibela ukuhlolwa nge", "review_advice": "Sicebisa ukuba uwuhlole minyaka le okanye xa kukho utshintsho olukhulu ebomini.", "review_now": "Hlola Ngoku", "quick_actions": "Izenzo Ezikhawulezayo", "qa_upload": "Layisha Uxwebhu Olutsha", "qa_upload_s": "Yongeza umyolelo omtsha okanye isongezo", "qa_edit": "Hlela Umyolelo Wam", "qa_edit_s": "Yenza utshintsho kumyolelo wakho okhoyo", "qa_benef": "Lawula Abaxhamli", "qa_benef_s": "Jonga okanye uhlaziye abaxhamli", "qa_link": "Dibanisa Iakhawunti okanye Impahla", "qa_link_s": "Yongeza okanye uhlaziye iimpahla neeakhawunti", "legal_support": "Inkxaso Yezomthetho", "need_help": "Udinga uncedo?", "need_help_s": "Iqela lethu lezomthetho likhona ukukuxhasa.", "chat_lawyer": "Ncokola neGqwetha lakho", "chat_hours": "Ukhona Mvulo–Lwesihlanu, 9am–5pm", "call_back": "Cela ukufownelwa", "email_us": "Sithumelele i-imeyile", "estate_head": "Apho ilifa lakho limi khona", "estate_sub": "Imbono elula yenyathelo ngalinye ekulawuleni ilifa. Amanyathelo agqityiweyo aphawuliwe; inyathelo eligqanyisiweyo lelo sisebenza kulo ngoku.", "family_head": "Usapho & abaxhamli", "family_sub": "Ubume bosapho obubhalisiweyo belifa, nesabelo somxhamli ngamnye selifa. Apho umntwana ahambe phambili, isabelo sakhe sidlulela kubantwana bakhe (per stirpes).", "living": "Abaphilayo", "deceased": "Abasweleke", "married": "Batshatile", "share_residue": "Isabelo selifa", "assets_head": "Iiakhawunti & Iimpahla", "assets_sub": "Iiakhawunti, izindlu nezinye iimpahla ezibhalisiweyo njengenxalenye yelifa. Amaxabiso ngamaqikelelo ngelixa kulindwe ingxelo yokugqibela.", "livestock_head": "Irejista Yemfuyo", "livestock_sub": "Irejista ekhethekileyo yeenkomo, iibhokhwe negusha ezigcinwe lilifa — into entsha kwinkonzo yethu yolawulo lwelifa. Umhlambi ngamnye ubhaliswa, uxatyiswe kwaye ulandelelwe ngokuzalwa, ukufa nokudluliselwa de unikezelwe kubaxhamli.", "twin_head": "Digital Twin — apho imfuyo igcinwa khona", "twin_live": "Imboniselo bukho", "twin_sub": "Imephu esebenzayo yebuhlanti, amadlelo neendawo zamanzi. Iimpawu zibonisa apho umhlambi ngamnye ugcinwa khona; cofa umhlambi okanye indawo ukuze ubone iinkcukacha. Amanani adibanisiwe nerejista engentla.", "docs_head": "Amaxwebhu Omyolelo Wam", "docs_sub": "Onke amaxwebhu anxulumene nelifa lakho kwindawo enye ekhuselekileyo. Izinto eziphawulwe ngokubomvu zifuna isenzo kuwe.", "upload_doc": "Layisha uxwebhu", "upload_doc_s": "Yongeza isazisi, isiqinisekiso okanye olunye uxwebhu lwenkxaso kwifayile yelifa lakho", "legal_head": "Inkxaso Yezomthetho & Imiyalezo", "legal_sub": "Fikelela ngqo kwigqwetha lakho elimisiweyo. Umcimbi wakho uphethwe ngu", "legal_hero_s": "Iqela lethu lezomthetho likhona ukukuxhasa kwinyathelo ngalinye lelifa.", "start_chat": "Qala incoko", "request": "Cela", "email": "I-imeyile", "rights": "Onke amalungelo agciniwe", "privacy": "Umgaqo-nkqubo Wabucala", "terms": "Imigaqo Yenkonzo", "cookie": "Umgaqo-nkqubo Wekuki", "family_members": "amalungu osapho", "recent_moves": "Iintshukumo zakutsha nje", "in_estate": "kwilifa", "distributed": "kwabiwe", "sold": "kuthengisiwe", "sp_Cattle": "Iinkomo", "sp_Goats": "Iibhokhwe", "sp_Sheep": "Iigusha", "twin_total_head": "Iintloko zizonke endaweni", "twin_zones": "Iindawo zamadlelo", "twin_water": "Iindawo zamanzi", "twin_tap": "Cofa uphawu ukuze ubone iinkcukacha zomhlambi.", "custodian": "Umgcini", "location": "Indawo", "earmark": "Uphawu", "value": "Ixabiso", "will_documents": "Amaxwebhu Omyolelo", "accounts_assets": "Iiakhawunti & Iimpahla", "livestock_lbl": "Imfuyo", "beneficiaries_lbl": "Abaxhamli", "last_updated": "Kugqityelwe ukuhlaziywa", "total": "Iyonke", "people_included": "Abantu obabandakanyileyo", "view_documents": "Jonga Amaxwebhu", "view_accounts": "Jonga Iiakhawunti", "view_register": "Jonga Irejista", "view_beneficiaries": "Jonga Abaxhamli", "required_you": "Kufuneka kuwe", "being_prepared": "Ilungiswa yinkampani", "awaiting": "Kulindiwe", "download": "Khuphela", "upload": "Layisha", "added": "yongezwe", "by": "ngu", "all": "Konke", "ev_birth": "Ukuzalwa", "ev_death": "Ukulahlekelwa", "ev_sale": "Ukuthengisa", "ev_transfer": "Ukudluliselwa kumxhamli", "ev_count": "Ukubalwa kuqinisekisiwe"};
+I18N.nd = {"welcome_back": "Siyakwamukela futhi,", "welcome_sub": "Silapha ukukusiza ukuvikela okuqakathekileyo kuwe.", "nav_dashboard": "Ideshibhodi", "nav_docs": "Amaphepha eWill Yami", "nav_estate": "Ilifa Lami", "nav_family": "Isihlahla Somuli", "nav_assets": "Ama-akhawunti & Impahla", "nav_livestock": "Izifuyo", "nav_beneficiaries": "Abazuzayo", "nav_tasks": "Imisebenzi & Izikhumbuzo", "nav_messages": "Imilayezo", "nav_legal": "Usekelo Lomthetho", "nav_resources": "Izinto Ezilusizo", "nav_signout": "Phuma", "view": "Khangela", "estate_plan": "Uhlelo Lwelifa Lakho", "legacy_1": "Ilifa lakho.", "legacy_2": "Ngendlela yakho.", "hero_sub": "Gcina iwill lohlelo lwelifa kuhlaziyiwe, unike abathandekayo bakho ukuthula kwengqondo okuhlalayo.", "review_will": "Hlola iWill Yami", "admin_progress": "Inqubekela phambili yokuphatha ilifa", "next_step": "Isinyathelo esilandelayo:", "at_a_glance": "Ngokuphangisa", "last_reviewed": "IWill yakho yagcina ukuhlolwa nge", "review_advice": "Sikhuthaza ukuthi uyihlole minyaka yonke loba nxa kulotshintsho olukhulu empilweni.", "review_now": "Hlola Khathesi", "quick_actions": "Izenzo Ezisheshayo", "qa_upload": "Layisha Iphepha Elitsha", "qa_upload_s": "Engeza iwill elitsha loba isengezo", "qa_edit": "Lungisa iWill Yami", "qa_edit_s": "Yenza utshintsho kuwill lakho elikhona", "qa_benef": "Phatha Abazuzayo", "qa_benef_s": "Khangela loba uhlaziye abazuzayo", "qa_link": "Xhuma i-akhawunti loba Impahla", "qa_link_s": "Engeza loba uhlaziye impahla lama-akhawunti", "legal_support": "Usekelo Lomthetho", "need_help": "Udinga usizo?", "need_help_s": "Iqembu lethu lomthetho likhona ukukusekela.", "chat_lawyer": "Khuluma loMmeli wakho", "chat_hours": "Ukhona ngoMvulo–Lwesihlanu, 9am–5pm", "call_back": "Cela ukufonelwa", "email_us": "Sithumele i-imeyili", "estate_head": "Lapho ilifa lakho limi khona", "estate_sub": "Umbono olula wesinyathelo ngasinye ekuphatheni ilifa. Izinyathelo eseziphelile ziphawuliwe; isinyathelo esigqanyisiweyo yiso esisebenza kuso khathesi.", "family_head": "Umuli & abazuzayo", "family_sub": "Isimo somuli esibhalisiweyo selifa, lesabelo somzuzi ngamunye selifa. Lapho umntwana abhubha kuqala, isabelo sakhe sedlulela ebantwaneni bakhe (per stirpes).", "living": "Abaphilayo", "deceased": "Asebafayo", "married": "Batshadile", "share_residue": "Isabelo selifa", "assets_head": "Ama-akhawunti & Impahla", "assets_sub": "Ama-akhawunti, izindlu lenye impahla ebhalisiweyo njengengxenye yelifa. Amanani angamaqandelelo kulindwe umbiko wokucina.", "livestock_head": "Irejista Yezifuyo", "livestock_sub": "Irejista ekhethekileyo yenkomo, imbuzi lezimvu okugcinwe lilifa — into entsha emsebenzini wethu wokuphatha ilifa. Umhlambi ngamunye uyabhaliswa, uxatshelwe njalo ulandelelwe ngokuzalwa, ukufa lokudluliselwa kuze kunikezwe abazuzayo.", "twin_head": "Digital Twin — lapho izifuyo zigcinwa khona", "twin_live": "Umbono ophilayo", "twin_sub": "Imephu esebenzayo yesibaya, amadlelo lezindawo zamanzi. Amamaka atshengisa lapho umhlambi ngamunye ugcinwa khona; thinta umhlambi loba indawo ukuze ubone imininingwane. Izinombolo zixhunywe lerejista engaphezulu.", "docs_head": "Amaphepha eWill Yami", "docs_sub": "Wonke amaphepha aphathelene lelifa lakho endaweni eyodwa evikelekileyo. Izinto eziphawulwe ngokubomvu zidinga isenzo kuwe.", "upload_doc": "Layisha iphepha", "upload_doc_s": "Engeza isazisi, isiqinisekiso loba elinye iphepha losekelo efayilini yelifa lakho", "legal_head": "Usekelo Lomthetho & Imilayezo", "legal_sub": "Finyelela ngqo emmelini wakho omisiweyo. Indaba yakho iphethwe ngu", "legal_hero_s": "Iqembu lethu lomthetho likhona ukukusekela kuso sonke isinyathelo selifa.", "start_chat": "Qala ingxoxo", "request": "Cela", "email": "I-imeyili", "rights": "Wonke amalungelo agciniwe", "privacy": "Umthetho Wobumfihlo", "terms": "Imigomo Yenkonzo", "cookie": "Umthetho WeCookie", "family_members": "amalunga omuli", "recent_moves": "Ukunyikinyeka kwakamuva", "in_estate": "elifeni", "distributed": "kwabelwe", "sold": "kuthengisiwe", "sp_Cattle": "Inkomo", "sp_Goats": "Imbuzi", "sp_Sheep": "Izimvu", "twin_total_head": "Inhloko zonke endaweni", "twin_zones": "Izindawo zamadlelo", "twin_water": "Izindawo zamanzi", "twin_tap": "Thinta uphawu ukuze ubone imininingwane yomhlambi.", "custodian": "Umgcini", "location": "Indawo", "earmark": "Uphawu", "value": "Inani", "will_documents": "Amaphepha eWill", "accounts_assets": "Ama-akhawunti & Impahla", "livestock_lbl": "Izifuyo", "beneficiaries_lbl": "Abazuzayo", "last_updated": "Kugcine ukuhlaziywa", "total": "Sekukonke", "people_included": "Abantu obabandakanyileyo", "view_documents": "Khangela Amaphepha", "view_accounts": "Khangela Ama-akhawunti", "view_register": "Khangela Irejista", "view_beneficiaries": "Khangela Abazuzayo", "required_you": "Kudingeka kuwe", "being_prepared": "Kulungiswa yinkampani", "awaiting": "Kulindiwe", "download": "Landisa", "upload": "Layisha", "added": "kwengezwe", "by": "ngu", "all": "Konke", "ev_birth": "Ukuzalwa", "ev_death": "Ukulahlekelwa", "ev_sale": "Ukuthengisa", "ev_transfer": "Ukudluliselwa kumzuzi", "ev_count": "Ukubalwa kuqinisekisiwe"};
+I18N.st = {"welcome_back": "Re a u amohela hape,", "welcome_sub": "Re mona ho u thusa ho sireletsa se bohlokwa ho wena.", "nav_dashboard": "Dashboard", "nav_docs": "Ditokomane tsa Wili ya Ka", "nav_estate": "Lefa la Ka", "nav_family": "Sefate sa Lelapa", "nav_assets": "Diakhaonto & Thepa", "nav_livestock": "Diphoofolo", "nav_beneficiaries": "Bajalefa", "nav_tasks": "Mesebetsi & Dikgopotso", "nav_messages": "Melaetsa", "nav_legal": "Tshehetso ya Molao", "nav_resources": "Disebediswa", "nav_signout": "Tswa", "view": "Sheba", "estate_plan": "Moralo wa Lefa la Hao", "legacy_1": "Lefa la hao.", "legacy_2": "Ka tsela ya hao.", "hero_sub": "Boloka wili le moralo wa lefa di ntlafetse, o fe baratuwa ba hao kgotso ya monahano e sa feleng.", "review_will": "Hlahloba Wili ya Ka", "admin_progress": "Tswelopele ya tsamaiso ya lefa", "next_step": "Mohato o latelang:", "at_a_glance": "Ka Potlako", "last_reviewed": "Wili ya hao e hlahlobilwe la ho qetela ka", "review_advice": "Re kgothaletsa ho e hlahloba selemo le selemo kapa ha ho na le diphetoho tse kgolo bophelong.", "review_now": "Hlahloba Hona Joale", "quick_actions": "Diketso tse Potlakileng", "qa_upload": "Kenya Tokomane e Ntjha", "qa_upload_s": "Eketsa wili e ntjha kapa codicil", "qa_edit": "Fetola Wili ya Ka", "qa_edit_s": "Etsa diphetoho wiling ya hao e teng", "qa_benef": "Laola Bajalefa", "qa_benef_s": "Sheba kapa o ntlafatse bajalefa", "qa_link": "Hokahanya Akhaonto kapa Thepa", "qa_link_s": "Eketsa kapa o ntlafatse thepa le diakhaonto", "legal_support": "Tshehetso ya Molao", "need_help": "O hloka thuso?", "need_help_s": "Sehlopha sa rona sa molao se mona ho u tshehetsa.", "chat_lawyer": "Bua le Ramolao wa hao", "chat_hours": "O teng Mantaha–Labohlano, 9am–5pm", "call_back": "Kopa ho letsetswa", "email_us": "Re romelle imeile", "estate_head": "Moo lefa la hao le emeng teng", "estate_sub": "Pono e bonolo ya mohato o mong le o mong tsamaisong ya lefa. Mehato e phethilweng e tshwailwe; mohato o totobaditsweng ke oo re sebetsang ho ona hona joale.", "family_head": "Lelapa & bajalefa", "family_sub": "Sebopeho sa lelapa se ngodisitsweng sa lefa, le karolo ya mojalefa e mong le e mong ya lefa. Moo ngwana a shwetseng pele, karolo ya hae e fetela ho bana ba hae (per stirpes).", "living": "Ba phelang", "deceased": "Ba hlokahetseng", "married": "Ba nyalaneng", "share_residue": "Karolo ya lefa", "assets_head": "Diakhaonto & Thepa", "assets_sub": "Diakhaonto, matlo le thepa e nngwe e ngodisitsweng e le karolo ya lefa. Boleng ke dikgakanyo ho fihlela tlaleho ya ho qetela e phethwa.", "livestock_head": "Rejisetara ya Diphoofolo", "livestock_sub": "Rejisetara e ikgethileng ya dikgomo, dipodi le dinku tse tshwerweng ke lefa — ntho e ntjha tshebeletsong ya rona ya tsamaiso ya lefa. Mohlape o mong le o mong o a ngodiswa, o lekanngwe mme o latellwe ka tswalo, lefu le phetiso ho fihlela o fuwa baholellwa.", "twin_head": "Digital Twin — moo diphoofolo di bolokwang teng", "twin_live": "Pono e phelang", "twin_sub": "Mmapa o sebetsang wa lesaka, makgulo le dibaka tsa metsi. Matshwao a bontsha moo mohlape o mong le o mong o bolokwang teng; tobetsa mohlape kapa sebaka ho bona dintlha. Dipalo di hokahane le rejisetara e ka hodimo.", "docs_head": "Ditokomane tsa Wili ya Ka", "docs_sub": "Ditokomane tsohle tse amanang le lefa la hao sebakeng se le seng se sireletsehileng. Dintho tse tshwailweng ka bofubedu di hloka ketso ho tswa ho wena.", "upload_doc": "Kenya tokomane", "upload_doc_s": "Eketsa boitsebiso, setifikeiti kapa tokomane e nngwe ya tshehetso faeleng ya lefa la hao", "legal_head": "Tshehetso ya Molao & Melaetsa", "legal_sub": "Fihlella ramolao wa hao ya kgethilweng ka kotloloho. Taba ya hao e tsamaiswa ke", "legal_hero_s": "Sehlopha sa rona sa molao se mona ho u tshehetsa mohatong o mong le o mong wa lefa.", "start_chat": "Qala moqoqo", "request": "Kopa", "email": "Imeile", "rights": "Ditokelo tsohle di bolokilwe", "privacy": "Leano la Lekunutu", "terms": "Dipehelo tsa Tshebeletso", "cookie": "Leano la Cookie", "family_members": "ditho tsa lelapa", "recent_moves": "Metsamao ya morao tjena", "in_estate": "lefeng", "distributed": "di abilwe", "sold": "di rekisitswe", "sp_Cattle": "Dikgomo", "sp_Goats": "Dipodi", "sp_Sheep": "Dinku", "twin_total_head": "Dihlooho tsohle sebakeng", "twin_zones": "Dibaka tsa makgulo", "twin_water": "Dibaka tsa metsi", "twin_tap": "Tobetsa letshwao ho bona dintlha tsa mohlape.", "custodian": "Mohlokomedi", "location": "Sebaka", "earmark": "Letshwao", "value": "Boleng", "will_documents": "Ditokomane tsa Wili", "accounts_assets": "Diakhaonto & Thepa", "livestock_lbl": "Diphoofolo", "beneficiaries_lbl": "Bajalefa", "last_updated": "Ho ntlafaditswe la ho qetela", "total": "Kakaretso", "people_included": "Batho bao o ba kenyeleditseng", "view_documents": "Sheba Ditokomane", "view_accounts": "Sheba Diakhaonto", "view_register": "Sheba Rejisetara", "view_beneficiaries": "Sheba Bajalefa", "required_you": "E hlokahala ho wena", "being_prepared": "E lokiswa ke feme", "awaiting": "E emetswe", "download": "Khoasolla", "upload": "Kenya", "added": "e ekeditswe", "by": "ke", "all": "Tsohle", "ev_birth": "Tswalo", "ev_death": "Tahlehelo", "ev_sale": "Thekiso", "ev_transfer": "Phetisetso ho mojalefa", "ev_count": "Palo e netefaditswe"};
+I18N.af = {"welcome_back": "Welkom terug,", "welcome_sub": "Ons is hier om jou te help om te beskerm wat vir jou saak maak.", "nav_dashboard": "Kontroleskerm", "nav_docs": "My Testament-dokumente", "nav_estate": "My Boedel", "nav_family": "Familieboom", "nav_assets": "Rekeninge & Bates", "nav_livestock": "Vee", "nav_beneficiaries": "Begunstigdes", "nav_tasks": "Take & Herinneringe", "nav_messages": "Boodskappe", "nav_legal": "Regshulp", "nav_resources": "Hulpbronne", "nav_signout": "Teken uit", "view": "Bekyk", "estate_plan": "Jou Boedelplan", "legacy_1": "Jou nalatenskap.", "legacy_2": "Jou manier.", "hero_sub": "Hou jou testament en boedelplan op datum en gee jou geliefdes blywende gemoedsrus.", "review_will": "Hersien My Testament", "admin_progress": "Vordering van boedeladministrasie", "next_step": "Volgende stap:", "at_a_glance": "Met 'n Oogopslag", "last_reviewed": "Jou testament is laas hersien op", "review_advice": "Ons beveel aan dat jy dit jaarliks hersien of wanneer groot lewensveranderinge plaasvind.", "review_now": "Hersien Nou", "quick_actions": "Vinnige Aksies", "qa_upload": "Laai Nuwe Dokument Op", "qa_upload_s": "Voeg 'n nuwe testament of kodisil by", "qa_edit": "Wysig My Testament", "qa_edit_s": "Maak veranderinge aan jou bestaande testament", "qa_benef": "Bestuur Begunstigdes", "qa_benef_s": "Bekyk of werk begunstigdes by", "qa_link": "Koppel Rekening of Bate", "qa_link_s": "Voeg bates en rekeninge by of werk dit by", "legal_support": "Regshulp", "need_help": "Benodig jy hulp?", "need_help_s": "Ons regspan is hier om jou te ondersteun.", "chat_lawyer": "Gesels met jou Prokureur", "chat_hours": "Beskikbaar Ma–Vr, 09:00–17:00", "call_back": "Versoek 'n terugbel", "email_us": "E-pos Ons", "estate_head": "Waar jou boedel staan", "estate_sub": "'n Eenvoudige oorsig van elke stap in die administrasie van die boedel. Voltooide stappe is gemerk; die uitgeligte stap is waaraan ons nou werk.", "family_head": "Familie & begunstigdes", "family_sub": "Die familiestruktuur wat vir die boedel aangeteken is, met elke begunstigde se aandeel van die oorskot. Waar 'n kind voor die erflater gesterf het, gaan sy aandeel oor na sy eie kinders (per stirpes).", "living": "Lewend", "deceased": "Oorlede", "married": "Getroud", "share_residue": "Aandeel van oorskot", "assets_head": "Rekeninge & Bates", "assets_sub": "Die rekeninge, eiendom en ander bates wat as deel van die boedel aangeteken is. Waardes is skattings hangende die finale likwidasie- en distribusierekening.", "livestock_head": "Veeregister", "livestock_sub": "'n Toegewyde register vir beeste, bokke en skape wat deur die boedel gehou word — 'n nuwe deel van ons boedelbestuursdiens. Elke kudde word geïnventariseer, gewaardeer en gevolg deur geboortes, sterftes en oordragte tot uitkering aan die erfgename.", "twin_head": "Digitale Tweeling — waar die vee aangehou word", "twin_live": "Lewendige aansig", "twin_sub": "'n Interaktiewe kaart van die kraal, weikampe en waterpunte. Merkers wys waar elke kudde aangehou word; tik op 'n kudde of sone vir besonderhede. Tellings is gekoppel aan die register hierbo.", "docs_head": "My Testament-dokumente", "docs_sub": "Alle dokumente wat met jou boedel verband hou op een veilige plek. Items wat rooi gemerk is, vereis aksie van jou.", "upload_doc": "Laai 'n dokument op", "upload_doc_s": "Voeg 'n ID, sertifikaat of ondersteunende dokument by jou boedellêer", "legal_head": "Regshulp & Boodskappe", "legal_sub": "Bereik jou aangewese prokureur direk. Jou saak word hanteer deur", "legal_hero_s": "Ons regspan is hier om jou deur elke stap van die boedel te ondersteun.", "start_chat": "Begin gesels", "request": "Versoek", "email": "E-pos", "rights": "Alle regte voorbehou", "privacy": "Privaatheidsbeleid", "terms": "Diensvoorwaardes", "cookie": "Koekiebeleid", "family_members": "familielede", "recent_moves": "Onlangse bewegings", "in_estate": "in boedel", "distributed": "uitgekeer", "sold": "verkoop", "sp_Cattle": "Beeste", "sp_Goats": "Bokke", "sp_Sheep": "Skape", "twin_total_head": "Totale getal op die terrein", "twin_zones": "Weisones", "twin_water": "Waterpunte", "twin_tap": "Tik op 'n merker vir kuddebesonderhede.", "custodian": "Bewaarder", "location": "Ligging", "earmark": "Oormerk", "value": "Waarde", "will_documents": "Testament-dokumente", "accounts_assets": "Rekeninge & Bates", "livestock_lbl": "Vee", "beneficiaries_lbl": "Begunstigdes", "last_updated": "Laas opgedateer", "total": "Totaal", "people_included": "Mense wat jy ingesluit het", "view_documents": "Bekyk Dokumente", "view_accounts": "Bekyk Rekeninge", "view_register": "Bekyk Register", "view_beneficiaries": "Bekyk Begunstigdes", "required_you": "Benodig van jou", "being_prepared": "Word deur die firma voorberei", "awaiting": "Wag tans", "download": "Laai af", "upload": "Laai op", "added": "bygevoeg", "by": "deur", "all": "Alle", "ev_birth": "Geboorte", "ev_death": "Verlies", "ev_sale": "Verkoop", "ev_transfer": "Oordrag aan erfgenaam", "ev_count": "Telling bevestig"};
+I18N.sw = {"welcome_back": "Karibu tena,", "welcome_sub": "Tupo hapa kukusaidia kulinda kilicho muhimu kwako.", "nav_dashboard": "Dashibodi", "nav_docs": "Nyaraka za Wosia Wangu", "nav_estate": "Mali Yangu", "nav_family": "Mti wa Familia", "nav_assets": "Akaunti & Mali", "nav_livestock": "Mifugo", "nav_beneficiaries": "Wanufaika", "nav_tasks": "Kazi & Vikumbusho", "nav_messages": "Ujumbe", "nav_legal": "Msaada wa Kisheria", "nav_resources": "Rasilimali", "nav_signout": "Toka", "view": "Tazama", "estate_plan": "Mpango wa Mali Yako", "legacy_1": "Urithi wako.", "legacy_2": "Njia yako.", "hero_sub": "Weka wosia na mpango wa mali yako kuwa wa kisasa na uwape wapendwa wako amani ya akili ya kudumu.", "review_will": "Kagua Wosia Wangu", "admin_progress": "Maendeleo ya usimamizi wa mali", "next_step": "Hatua inayofuata:", "at_a_glance": "Kwa Mtazamo wa Haraka", "last_reviewed": "Wosia wako ulikaguliwa mwisho tarehe", "review_advice": "Tunapendekeza uukague kila mwaka au pale mabadiliko makubwa ya maisha yanapotokea.", "review_now": "Kagua Sasa", "quick_actions": "Vitendo vya Haraka", "qa_upload": "Pakia Nyaraka Mpya", "qa_upload_s": "Ongeza wosia mpya au nyongeza", "qa_edit": "Hariri Wosia Wangu", "qa_edit_s": "Fanya mabadiliko kwenye wosia wako uliopo", "qa_benef": "Simamia Wanufaika", "qa_benef_s": "Tazama au sasisha wanufaika", "qa_link": "Unganisha Akaunti au Mali", "qa_link_s": "Ongeza au sasisha mali na akaunti", "legal_support": "Msaada wa Kisheria", "need_help": "Unahitaji msaada?", "need_help_s": "Timu yetu ya kisheria ipo hapa kukusaidia.", "chat_lawyer": "Ongea na Wakili wako", "chat_hours": "Anapatikana Jumatatu–Ijumaa, 9am–5pm", "call_back": "Omba kupigiwa simu", "email_us": "Tutumie Barua Pepe", "estate_head": "Mahali mali yako ilipo", "estate_sub": "Mtazamo rahisi wa kila hatua katika usimamizi wa mali. Hatua zilizokamilika zimewekewa alama; hatua iliyoangaziwa ndiyo tunayoifanyia kazi sasa.", "family_head": "Familia & wanufaika", "family_sub": "Muundo wa familia uliosajiliwa wa mali, na sehemu ya kila mnufaika ya mabaki. Pale mtoto alipofariki kabla, sehemu yake huenda kwa watoto wake (per stirpes).", "living": "Hai", "deceased": "Marehemu", "married": "Wameoana", "share_residue": "Sehemu ya mali", "assets_head": "Akaunti & Mali", "assets_sub": "Akaunti, mali isiyohamishika na mali nyingine zilizosajiliwa kama sehemu ya urithi. Thamani ni makadirio yakisubiri hesabu ya mwisho ya ugawaji.", "livestock_head": "Daftari la Mifugo", "livestock_sub": "Daftari maalum la ng'ombe, mbuzi na kondoo wanaomilikiwa na mali — sehemu mpya ya huduma yetu ya usimamizi wa mali. Kila kundi husajiliwa, kuthaminiwa na kufuatiliwa kupitia kuzaliwa, vifo na uhamisho hadi kugawiwa kwa warithi.", "twin_head": "Pacha wa Kidijitali — mahali mifugo inapowekwa", "twin_live": "Mwonekano wa moja kwa moja", "twin_sub": "Ramani shirikishi ya zizi, malisho na vituo vya maji. Alama zinaonyesha mahali kila kundi linapowekwa; gusa kundi au eneo kwa maelezo. Idadi imeunganishwa na daftari hapo juu.", "docs_head": "Nyaraka za Wosia Wangu", "docs_sub": "Nyaraka zote zinazohusiana na mali yako mahali pamoja salama. Vitu vilivyowekewa alama nyekundu vinahitaji hatua kutoka kwako.", "upload_doc": "Pakia nyaraka", "upload_doc_s": "Ongeza kitambulisho, cheti au nyaraka nyingine ya msaada kwenye faili la mali yako", "legal_head": "Msaada wa Kisheria & Ujumbe", "legal_sub": "Mfikie wakili wako aliyeteuliwa moja kwa moja. Kesi yako inashughulikiwa na", "legal_hero_s": "Timu yetu ya kisheria ipo hapa kukusaidia katika kila hatua ya mali.", "start_chat": "Anza mazungumzo", "request": "Omba", "email": "Barua pepe", "rights": "Haki zote zimehifadhiwa", "privacy": "Sera ya Faragha", "terms": "Masharti ya Huduma", "cookie": "Sera ya Kuki", "family_members": "wanafamilia", "recent_moves": "Mienendo ya hivi karibuni", "in_estate": "katika mali", "distributed": "imegawiwa", "sold": "imeuzwa", "sp_Cattle": "Ng'ombe", "sp_Goats": "Mbuzi", "sp_Sheep": "Kondoo", "twin_total_head": "Jumla ya vichwa eneoni", "twin_zones": "Maeneo ya malisho", "twin_water": "Vituo vya maji", "twin_tap": "Gusa alama kuona maelezo ya kundi.", "custodian": "Mtunzaji", "location": "Mahali", "earmark": "Alama ya sikio", "value": "Thamani", "will_documents": "Nyaraka za Wosia", "accounts_assets": "Akaunti & Mali", "livestock_lbl": "Mifugo", "beneficiaries_lbl": "Wanufaika", "last_updated": "Ilisasishwa mwisho", "total": "Jumla", "people_included": "Watu uliowajumuisha", "view_documents": "Tazama Nyaraka", "view_accounts": "Tazama Akaunti", "view_register": "Tazama Daftari", "view_beneficiaries": "Tazama Wanufaika", "required_you": "Inahitajika kutoka kwako", "being_prepared": "Inaandaliwa na kampuni", "awaiting": "Inasubiri", "download": "Pakua", "upload": "Pakia", "added": "imeongezwa", "by": "na", "all": "Zote", "ev_birth": "Kuzaliwa", "ev_death": "Hasara", "ev_sale": "Mauzo", "ev_transfer": "Uhamisho kwa mrithi", "ev_count": "Hesabu imethibitishwa"};
+I18N.it = {"welcome_back": "Bentornato,", "welcome_sub": "Siamo qui per aiutarti a proteggere ciò che conta di più.", "nav_dashboard": "Pannello", "nav_docs": "I Miei Documenti Testamentari", "nav_estate": "Il Mio Patrimonio", "nav_family": "Albero Genealogico", "nav_assets": "Conti & Beni", "nav_livestock": "Bestiame", "nav_beneficiaries": "Beneficiari", "nav_tasks": "Attività & Promemoria", "nav_messages": "Messaggi", "nav_legal": "Assistenza Legale", "nav_resources": "Risorse", "nav_signout": "Esci", "view": "Vedi", "estate_plan": "Il Tuo Piano Patrimoniale", "legacy_1": "La tua eredità.", "legacy_2": "A modo tuo.", "hero_sub": "Mantieni aggiornati il testamento e il piano patrimoniale e dai ai tuoi cari una serenità duratura.", "review_will": "Rivedi il Mio Testamento", "admin_progress": "Avanzamento dell'amministrazione", "next_step": "Prossimo passo:", "at_a_glance": "In Sintesi", "last_reviewed": "Il tuo testamento è stato rivisto l'ultima volta il", "review_advice": "Consigliamo di rivederlo annualmente o in caso di importanti cambiamenti di vita.", "review_now": "Rivedi Ora", "quick_actions": "Azioni Rapide", "qa_upload": "Carica Nuovo Documento", "qa_upload_s": "Aggiungi un nuovo testamento o codicillo", "qa_edit": "Modifica il Mio Testamento", "qa_edit_s": "Apporta modifiche al tuo testamento esistente", "qa_benef": "Gestisci Beneficiari", "qa_benef_s": "Visualizza o aggiorna i beneficiari", "qa_link": "Collega Conto o Bene", "qa_link_s": "Aggiungi o aggiorna beni e conti", "legal_support": "Assistenza Legale", "need_help": "Hai bisogno di aiuto?", "need_help_s": "Il nostro team legale è qui per supportarti.", "chat_lawyer": "Chatta con il tuo Avvocato", "chat_hours": "Disponibile Lun–Ven, 9–17", "call_back": "Richiedi una richiamata", "email_us": "Scrivici", "estate_head": "A che punto è il tuo patrimonio", "estate_sub": "Una panoramica in linguaggio semplice di ogni fase dell'amministrazione del patrimonio. Le fasi completate sono contrassegnate; la fase evidenziata è quella su cui stiamo lavorando ora.", "family_head": "Famiglia & beneficiari", "family_sub": "La struttura familiare registrata per il patrimonio, con la quota di ciascun beneficiario sul residuo. Quando un figlio è premorto, la sua quota passa ai propri figli (per stirpe).", "living": "In vita", "deceased": "Deceduto", "married": "Sposati", "share_residue": "Quota del residuo", "assets_head": "Conti & Beni", "assets_sub": "I conti, gli immobili e gli altri beni registrati come parte del patrimonio. I valori sono stime in attesa del conto finale di liquidazione e distribuzione.", "livestock_head": "Registro del Bestiame", "livestock_sub": "Un registro dedicato a bovini, capre e pecore detenuti dal patrimonio — una parte innovativa del nostro servizio di gestione patrimoniale. Ogni mandria è inventariata, valutata e tracciata attraverso nascite, decessi e trasferimenti fino alla distribuzione agli eredi.", "twin_head": "Gemello Digitale — dove è tenuto il bestiame", "twin_live": "Vista in tempo reale", "twin_sub": "Una mappa interattiva del recinto, dei campi di pascolo e dei punti d'acqua. I segnaposto mostrano dove è tenuta ogni mandria; tocca una mandria o una zona per i dettagli. I conteggi sono collegati al registro qui sopra.", "docs_head": "I Miei Documenti Testamentari", "docs_sub": "Tutti i documenti relativi al tuo patrimonio in un unico luogo sicuro. Gli elementi contrassegnati in rosso richiedono un'azione da parte tua.", "upload_doc": "Carica un documento", "upload_doc_s": "Aggiungi un documento d'identità, certificato o altro documento di supporto al tuo fascicolo", "legal_head": "Assistenza Legale & Messaggi", "legal_sub": "Contatta direttamente il tuo avvocato designato. La tua pratica è gestita da", "legal_hero_s": "Il nostro team legale è qui per supportarti in ogni fase del patrimonio.", "start_chat": "Avvia chat", "request": "Richiedi", "email": "Email", "rights": "Tutti i diritti riservati", "privacy": "Informativa sulla Privacy", "terms": "Termini di Servizio", "cookie": "Informativa sui Cookie", "family_members": "membri della famiglia", "recent_moves": "Movimenti recenti", "in_estate": "nel patrimonio", "distributed": "distribuito", "sold": "venduto", "sp_Cattle": "Bovini", "sp_Goats": "Capre", "sp_Sheep": "Pecore", "twin_total_head": "Totale capi sul sito", "twin_zones": "Zone di pascolo", "twin_water": "Punti d'acqua", "twin_tap": "Tocca un segnaposto per i dettagli della mandria.", "custodian": "Custode", "location": "Posizione", "earmark": "Marchio auricolare", "value": "Valore", "will_documents": "Documenti Testamentari", "accounts_assets": "Conti & Beni", "livestock_lbl": "Bestiame", "beneficiaries_lbl": "Beneficiari", "last_updated": "Ultimo aggiornamento", "total": "Totale", "people_included": "Persone che hai incluso", "view_documents": "Vedi Documenti", "view_accounts": "Vedi Conti", "view_register": "Vedi Registro", "view_beneficiaries": "Vedi Beneficiari", "required_you": "Richiesto da te", "being_prepared": "In preparazione dallo studio", "awaiting": "In attesa", "download": "Scarica", "upload": "Carica", "added": "aggiunto", "by": "da", "all": "Tutti", "ev_birth": "Nascita", "ev_death": "Perdita", "ev_sale": "Vendita", "ev_transfer": "Trasferimento all'erede", "ev_count": "Conteggio verificato"};
+I18N.bem = {"welcome_back": "Mwaiseni nakabili,", "welcome_sub": "Tuli pano ukumwafwa ukucingilila ifyacindama kuli imwe.", "nav_dashboard": "Dashboard", "nav_docs": "Amapepala ya Cipangano Candi", "nav_estate": "Ifikwatwa Fyandi", "nav_family": "Umuti wa Lupwa", "nav_assets": "Amaakaunti & Ifikwatwa", "nav_livestock": "Ifitekwa", "nav_beneficiaries": "Abapyana", "nav_tasks": "Imilimo & Ifya Kucinkulako", "nav_messages": "Imisango", "nav_legal": "Ubwafwilisho bwa Mafunde", "nav_resources": "Ifya Kubomfya", "nav_signout": "Fumeni", "view": "Moneni", "estate_plan": "Umupango wa Fikwatwa Fyenu", "legacy_1": "Ubupyani bwenu.", "legacy_2": "Munshila yenu.", "hero_sub": "Sungeni icipangano no mupango wa fikwatwa fyabikwa bwino, mupeele abatemwikwa benu umutende wa muntima uwa muyayaya.", "review_will": "Ceeceni Icipangano Candi", "admin_progress": "Ukutwalilila kwa kuteeka ifikwatwa", "next_step": "Intampulo iikonkapo:", "at_a_glance": "Mu Kumona Bwangu", "last_reviewed": "Icipangano cenu caceceshiwe pa kulekelesha pa", "review_advice": "Tulekoselesha ukucicecesha cila mwaka nelyo ilyo kwaba amasinkuko ayakalamba mu bumi.", "review_now": "Ceeceni Nomba", "quick_actions": "Ifya Kucita Bwangu", "qa_upload": "Tumineni Icipepala Cipya", "qa_upload_s": "Lundeniko icipangano cipya nelyo codicil", "qa_edit": "Lungeni Icipangano Candi", "qa_edit_s": "Citeni amasinkuko ku cipangano cenu icaba", "qa_benef": "Teekeni Abapyana", "qa_benef_s": "Moneni nelyo lungululeni abapyana", "qa_link": "Lundeni Akaunti nelyo Icikwatwa", "qa_link_s": "Lundeniko nelyo lungululeni ifikwatwa na maakaunti", "legal_support": "Ubwafwilisho bwa Mafunde", "need_help": "Mulekabila ubwafwilisho?", "need_help_s": "Ibumba lyesu lya mafunde lili pano ukumutungilila.", "chat_lawyer": "Lanshanyeni na Kaunga-mulandu wenu", "chat_hours": "Baliko Cimo–Cisano, 9am–5pm", "call_back": "Lombeni ukumucelelako", "email_us": "Tutumineni email", "estate_head": "Apo ifikwatwa fyenu fyaiminina", "estate_sub": "Ukumona kwapwililika kwa ntampulo shonse mu kuteeka ifikwatwa. Intampulo shapwa shalembwa; intampulo iyabikwapo e iyo tulebomba nomba.", "family_head": "Ulupwa & abapyana", "family_sub": "Imibekeshanya ya lupwa iyalembwa ya fikwatwa, na cipande ca mupyani onse ca fyashalapo. Apo umwana afwilile ntanshi, icipande cakwe cileya ku bana bakwe (per stirpes).", "living": "Abomi", "deceased": "Abafwa", "married": "Abaupana", "share_residue": "Icipande ca bupyani", "assets_head": "Amaakaunti & Ifikwatwa", "assets_sub": "Amaakaunti, amayanda na fimbi ifikwatwa ifyalembwa nge cipande ca fikwatwa. Imitengo ni mapimpikisho ukufika lipoti ya kulekelesha ilyo yapwa.", "livestock_head": "Rejista ya Fitekwa", "livestock_sub": "Rejista yapatwa iya ng'ombe, imbushi ne mpaanga ifyo ifikwatwa fyakwata — icintu cipya mu mulimo wesu wa kuteeka ifikwatwa. Umukuni onse ulalembwa, ulapimwa kabili ulakonkelelwa muku kufyalwa, imfwa no kupyanika ukufika apo ufweelwe ku bapyana.", "twin_head": "Digital Twin — apo ifitekwa fyasungwa", "twin_live": "Ukumona kwa nomba line", "twin_sub": "Mapu uubomba uwa cinka, ifya kuliila ne ncende sha menshi. Ifishibilo filanga apo umukuni onse wasungwa; kwateni umukuni nelyo incende ku kumona ifingi. Imipendo yalundwa ku rejista iya pa muulu.", "docs_head": "Amapepala ya Cipangano Candi", "docs_sub": "Amapepala yonse ayakuma ku fikwatwa fyenu mu ncende imo iyacingililwa. Ifyalembwa ifikashika filekabila ico mucita.", "upload_doc": "Tumineni icipepala", "upload_doc_s": "Lundeniko icitupa, icishibilo nelyo icipepala cimbi ku faili ya fikwatwa fyenu", "legal_head": "Ubwafwilisho bwa Mafunde & Imisango", "legal_sub": "Fikeni kuli kaunga-mulandu wenu uwasontwa. Umulandu wenu uleteekwa na", "legal_hero_s": "Ibumba lyesu lya mafunde lili pano ukumutungilila pa ntampulo yonse iya fikwatwa.", "start_chat": "Tampeni ukulanshanya", "request": "Lombeni", "email": "Email", "rights": "Insambu shonse shasungwa", "privacy": "Ifunde lya Nkama", "terms": "Amafunde ya Mulimo", "cookie": "Ifunde lya Cookie", "family_members": "aba mu lupwa", "recent_moves": "Ukwenda kwa nomba line", "in_estate": "mu fikwatwa", "distributed": "fyagabwilwe", "sold": "fyashitishiwe", "sp_Cattle": "Ing'ombe", "sp_Goats": "Imbushi", "sp_Sheep": "Impaanga", "twin_total_head": "Imitwe yonse pa ncende", "twin_zones": "Incende sha kuliila", "twin_water": "Incende sha menshi", "twin_tap": "Kwateni icishibilo ku kumona ifingi pa mukuni.", "custodian": "Kasunga", "location": "Incende", "earmark": "Icishibilo", "value": "Umutengo", "will_documents": "Amapepala ya Cipangano", "accounts_assets": "Amaakaunti & Ifikwatwa", "livestock_lbl": "Ifitekwa", "beneficiaries_lbl": "Abapyana", "last_updated": "Calungululwa pa kulekelesha", "total": "Conse", "people_included": "Abantu mwabikako", "view_documents": "Moneni Amapepala", "view_accounts": "Moneni Amaakaunti", "view_register": "Moneni Rejista", "view_beneficiaries": "Moneni Abapyana", "required_you": "Cilekabilwa kuli imwe", "being_prepared": "Cilepekanishiwa ne kampani", "awaiting": "Cilepembelelwa", "download": "Tapuleni", "upload": "Tumineni", "added": "calundwa", "by": "na", "all": "Fyonse", "ev_birth": "Ukufyalwa", "ev_death": "Ukuluba", "ev_sale": "Ukushitisha", "ev_transfer": "Ukupyanika ku mupyani", "ev_count": "Ukupenda kwasuminishiwa"};
+I18N.ln = {"welcome_back": "Boyei malamu lisusu,", "welcome_sub": "Tozali awa mpo na kosalisa yo kobatela oyo ezali na ntina mpo na yo.", "nav_dashboard": "Dashboard", "nav_docs": "Mikanda ya Testama na Ngai", "nav_estate": "Bozwi na Ngai", "nav_family": "Nzete ya Libota", "nav_assets": "Bakonti & Biloko", "nav_livestock": "Bibwele", "nav_beneficiaries": "Bazwi ya libula", "nav_tasks": "Misala & Bokundoli", "nav_messages": "Bansango", "nav_legal": "Lisalisi ya Mibeko", "nav_resources": "Biloko ya Kosalela", "nav_signout": "Bima", "view": "Tala", "estate_plan": "Mwango ya Bozwi na Yo", "legacy_1": "Libula na yo.", "legacy_2": "Na lolenge na yo.", "hero_sub": "Batela testama mpe mwango ya bozwi ezala ya sika, mpe pesa bandeko na yo kimia ya motema ya seko.", "review_will": "Tala Testama na Ngai", "admin_progress": "Bokei liboso ya boyangeli ya bozwi", "next_step": "Litambe oyo elandi:", "at_a_glance": "Na Mbala Moko", "last_reviewed": "Testama na yo etalamaki mbala ya nsuka na", "review_advice": "Tozali kopesa toli ya kotala yango mbula na mbula to ntango mbongwana minene ya bomoi ezali.", "review_now": "Tala Sikoyo", "quick_actions": "Misala ya Mbangu", "qa_upload": "Tinda Mokanda ya Sika", "qa_upload_s": "Bakisa testama ya sika to codicil", "qa_edit": "Bongola Testama na Ngai", "qa_edit_s": "Sala mbongwana na testama na yo oyo ezali", "qa_benef": "Yangela Bazwi ya libula", "qa_benef_s": "Tala to bongola bazwi ya libula", "qa_link": "Kangisa Konti to Eloko", "qa_link_s": "Bakisa to bongola biloko mpe bakonti", "legal_support": "Lisalisi ya Mibeko", "need_help": "Ozali na mposa ya lisalisi?", "need_help_s": "Ekipi na biso ya mibeko ezali awa mpo na kosunga yo.", "chat_lawyer": "Solola na Avoka na yo", "chat_hours": "Azali Mokolo ya liboso–Mitano, 9am–5pm", "call_back": "Sɛnga ete bábɛnga yo", "email_us": "Tindela biso email", "estate_head": "Esika bozwi na yo etɛlɛmi", "estate_sub": "Komona ya pɛtɛɛ ya litambe na litambe na boyangeli ya bozwi. Matambe oyo esili elakisami; litambe oyo emonisami ezali oyo tozali kosala sikoyo.", "family_head": "Libota & bazwi ya libula", "family_sub": "Boyokani ya libota oyo ekomami mpo na bozwi, na eteni ya mozwi mokomoko ya oyo etikali. Soki mwana akufaki liboso, eteni na ye ekei na bana na ye (per stirpes).", "living": "Bazali na bomoi", "deceased": "Bakufá", "married": "Babalani", "share_residue": "Eteni ya libula", "assets_head": "Bakonti & Biloko", "assets_sub": "Bakonti, bandako mpe biloko mosusu oyo ekomami lokola eteni ya bozwi. Motuya ezali bikateli kozela likomi ya nsuka ya bokaboli.", "livestock_head": "Buku ya Bibwele", "livestock_sub": "Buku ya kokɛsɛna mpo na bangɔmbɛ, bantaba mpe bameme oyo bozwi ezali na yango — eloko ya sika na mosala na biso ya boyangeli ya bozwi. Etonga mokomoko ekomami, etalelami mpe elandelami na nzela ya kobotama, liwa mpe bokimisi tii bokaboli epai ya bazwi ya libula.", "twin_head": "Digital Twin — esika bibwele ezali kobatelama", "twin_live": "Komona ya mbala moko", "twin_sub": "Karte oyo esalaka ya lopango, bilanga ya kolia mpe bisika ya mai. Bilembo elakisi esika etonga mokomoko ezali; finá etonga to esika mpo na makambo. Motángo ekangisami na buku ya likoló.", "docs_head": "Mikanda ya Testama na Ngai", "docs_sub": "Mikanda nyonso oyo etali bozwi na yo na esika moko ya kobatelama. Biloko oyo ezali na motane esengeli ozwa likambo.", "upload_doc": "Tinda mokanda", "upload_doc_s": "Bakisa karte ya bonsomi, atɛstasió to mokanda mosusu ya lisalisi na dosie na yo", "legal_head": "Lisalisi ya Mibeko & Bansango", "legal_sub": "Kóma na avoka na yo oyo baponaki mbala moko. Likambo na yo ezali kosalelama na", "legal_hero_s": "Ekipi na biso ya mibeko ezali awa mpo na kosunga yo na litambe nyonso ya bozwi.", "start_chat": "Banda lisolo", "request": "Sɛnga", "email": "Email", "rights": "Makoki nyonso ebatelami", "privacy": "Mobeko ya Bonkutu", "terms": "Mibeko ya Mosala", "cookie": "Mobeko ya Cookie", "family_members": "bato ya libota", "recent_moves": "Boningani ya kala mingi te", "in_estate": "na bozwi", "distributed": "ekabolami", "sold": "etekami", "sp_Cattle": "Bangɔmbɛ", "sp_Goats": "Bantaba", "sp_Sheep": "Bameme", "twin_total_head": "Motángo nyonso ya mitó na esika", "twin_zones": "Bisika ya kolia", "twin_water": "Bisika ya mai", "twin_tap": "Finá elembo mpo na komona makambo ya etonga.", "custodian": "Mobateli", "location": "Esika", "earmark": "Elembo ya litoyi", "value": "Motuya", "will_documents": "Mikanda ya Testama", "accounts_assets": "Bakonti & Biloko", "livestock_lbl": "Bibwele", "beneficiaries_lbl": "Bazwi ya libula", "last_updated": "Ebongwami mbala ya nsuka", "total": "Nyonso", "people_included": "Bato oyo otyaki", "view_documents": "Tala Mikanda", "view_accounts": "Tala Bakonti", "view_register": "Tala Buku", "view_beneficiaries": "Tala Bazwi ya libula", "required_you": "Esengami epai na yo", "being_prepared": "Ezali kobongisama na biro", "awaiting": "Ezali kozela", "download": "Kitisa", "upload": "Tinda", "added": "ebakisami", "by": "na", "all": "Nyonso", "ev_birth": "Kobotama", "ev_death": "Kobungisa", "ev_sale": "Botɛki", "ev_transfer": "Bokimisi epai ya mozwi", "ev_count": "Botángi endimami"};
+I18N.lg = {"welcome_back": "Tukwanirizza nate,", "welcome_sub": "Tuli wano okukuyamba okukuuma ebikulu gy'oli.", "nav_dashboard": "Dashboard", "nav_docs": "Ebiwandiiko by'Ekiraamo Kyange", "nav_estate": "Obusika Bwange", "nav_family": "Omuti gw'Oluganda", "nav_assets": "Akkawunti & Ebintu", "nav_livestock": "Ente n'Ebisolo", "nav_beneficiaries": "Abasika", "nav_tasks": "Emirimu & Ebijjukizo", "nav_messages": "Obubaka", "nav_legal": "Obuyambi bw'Amateeka", "nav_resources": "Ebikozesebwa", "nav_signout": "Fuluma", "view": "Laba", "estate_plan": "Enteekateeka y'Obusika Bwo", "legacy_1": "Obusika bwo.", "legacy_2": "Mu ngeri yo.", "hero_sub": "Kuuma ekiraamo n'enteekateeka y'obusika nga bipya, era owe ab'oluganda lwo emirembe egy'olubeerera.", "review_will": "Ddamu Olabe Ekiraamo Kyange", "admin_progress": "Enkulaakulana mu kuddukanya obusika", "next_step": "Eddaala eddako:", "at_a_glance": "Mu Kutunula Okumu", "last_reviewed": "Ekiraamo kyo kyasembayo okwekebejjebwa ku", "review_advice": "Tukubuulira okukyekebejja buli mwaka oba nga wabaddewo enkyukakyuka enkulu mu bulamu.", "review_now": "Kebera Kati", "quick_actions": "Ebikolwa Ebyangu", "qa_upload": "Tereeka Ekiwandiiko Ekiggya", "qa_upload_s": "Yongerako ekiraamo ekiggya oba codicil", "qa_edit": "Kyusa Ekiraamo Kyange", "qa_edit_s": "Kola enkyukakyuka ku kiraamo kyo ekiriwo", "qa_benef": "Dduukanya Abasika", "qa_benef_s": "Laba oba okyuse abasika", "qa_link": "Kwataganya Akkawunti oba Ekintu", "qa_link_s": "Yongerako oba okyuse ebintu n'akkawunti", "legal_support": "Obuyambi bw'Amateeka", "need_help": "Weetaaga obuyambi?", "need_help_s": "Ekibiina kyaffe eky'amateeka kiri wano okukuwagira.", "chat_lawyer": "Nyumya ne Loyiya wo", "chat_hours": "Aliwo Bbalaza–Lwakutaano, 9am–5pm", "call_back": "Saba bakukubire essimu", "email_us": "Tutumire email", "estate_head": "Obusika bwo we buyimiridde", "estate_sub": "Endabika ennyangu eya buli ddaala mu kuddukanya obusika. Amadaala agamaze gateekebwako akabonero; eddaala eriraga lye twe tukolerako kati.", "family_head": "Oluganda & abasika", "family_sub": "Enzimba y'oluganda eyawandiikibwa ey'obusika, n'omugabo gwa buli musika ku bisigaddewo. Omwana bwe yafa nga tannafuna, omugabo gwe gugenda eri abaana be (per stirpes).", "living": "Abalamu", "deceased": "Abaafa", "married": "Abafumbo", "share_residue": "Omugabo gw'obusika", "assets_head": "Akkawunti & Ebintu", "assets_sub": "Akkawunti, amayumba n'ebintu ebirala ebyawandiikibwa ng'ekitundu ky'obusika. Emiwendo bya kuteebereza nga tulindirira alipoota ey'enkomerero.", "livestock_head": "Erejisita y'Ente n'Ebisolo", "livestock_sub": "Erejisita eyenjawulo ey'ente, embuzi n'endiga ezikuumibwa obusika — ekintu ekiggya mu mpeereza yaffe ey'okuddukanya obusika. Buli kisibo kiwandiikibwa, kibalirirwa era kigobererwa nga kuyita mu kuzaalibwa, okufa n'okutwala okutuusa nga buweereddwa abasika.", "twin_head": "Digital Twin — ente n'ebisolo we bikuumibwa", "twin_live": "Endabika eya kati", "twin_sub": "Maapu ekola ey'ekisibo, ebifo eby'okuliisa n'ebifo eby'amazzi. Obubonero bulaga buli kisibo we kikuumibwa; nyiga ekisibo oba ekifo olabe ebisingawo. Emiwendo gikwatagana ne rejisita eri waggulu.", "docs_head": "Ebiwandiiko by'Ekiraamo Kyange", "docs_sub": "Ebiwandiiko byonna ebikwata ku busika bwo mu kifo kimu eky'obukuumi. Ebintu ebiteekeddwako akamyufu byetaaga ky'okola.", "upload_doc": "Tereeka ekiwandiiko", "upload_doc_s": "Yongerako endagamuntu, satifikeeti oba ekiwandiiko ekirala eky'obuyambi ku fayiro yo", "legal_head": "Obuyambi bw'Amateeka & Obubaka", "legal_sub": "Tuukirira loyiya wo eyalondebwa butereevu. Omusango gwo guddukanyizibwa", "legal_hero_s": "Ekibiina kyaffe eky'amateeka kiri wano okukuwagira mu buli ddaala ery'obusika.", "start_chat": "Tandika okunyumya", "request": "Saba", "email": "Email", "rights": "Eddembe lyonna likuumiddwa", "privacy": "Enkola y'Ekyama", "terms": "Ebiragiro by'Empeereza", "cookie": "Enkola ya Cookie", "family_members": "ab'oluganda", "recent_moves": "Entambula ez'akaseera kano", "in_estate": "mu busika", "distributed": "byagabanyizibwa", "sold": "byatundibwa", "sp_Cattle": "Ente", "sp_Goats": "Embuzi", "sp_Sheep": "Endiga", "twin_total_head": "Omuwendo gwonna ogw'emitwe ku kifo", "twin_zones": "Ebifo eby'okuliisa", "twin_water": "Ebifo eby'amazzi", "twin_tap": "Nyiga akabonero olabe ebisingawo ku kisibo.", "custodian": "Omukuumi", "location": "Ekifo", "earmark": "Akabonero", "value": "Omuwendo", "will_documents": "Ebiwandiiko by'Ekiraamo", "accounts_assets": "Akkawunti & Ebintu", "livestock_lbl": "Ente n'Ebisolo", "beneficiaries_lbl": "Abasika", "last_updated": "Lwasembayo okukyusibwa", "total": "Omugatte", "people_included": "Abantu b'oyingizizza", "view_documents": "Laba Ebiwandiiko", "view_accounts": "Laba Akkawunti", "view_register": "Laba Erejisita", "view_beneficiaries": "Laba Abasika", "required_you": "Kyetaagisa okuva gy'oli", "being_prepared": "Kiteekateekebwa kkampuni", "awaiting": "Kilindiridwa", "download": "Tikka", "upload": "Tereeka", "added": "kyongezeddwako", "by": "omuntu", "all": "Byonna", "ev_birth": "Okuzaalibwa", "ev_death": "Okufiirwa", "ev_sale": "Okutunda", "ev_transfer": "Okutwala eri omusika", "ev_count": "Okubala kukakasiddwa"};
+function t(key){ const d=I18N[LANG]||I18N.en; return (d[key]!=null?d[key]:I18N.en[key]!=null?I18N.en[key]:key); }
+function applyI18n(){
+  document.querySelectorAll('[data-i18n]').forEach(el=>{ el.textContent = t(el.getAttribute('data-i18n')); });
+  document.documentElement.lang = LANG;
+}
+function buildLangMenu(){
+  const m=document.getElementById('langMenu');
+  m.innerHTML = LANGS.map(l=>`<button data-lang="${l.code}" class="${l.code===LANG?'active':''}" onclick="setLang('${l.code}')">
+    <span class="lg-native">${l.native}</span><span class="flag">${l.name}</span></button>`).join('');
+}
+function toggleLangMenu(e){ e.stopPropagation(); document.getElementById('langMenu').classList.toggle('open'); }
+function setLang(code){
+  LANG=code; try{localStorage.setItem('crm_lang',code);}catch(_){}
+  buildLangMenu(); applyI18n();
+  document.getElementById('langMenu').classList.remove('open');
+  if(summary){ loadDemo(); renderAll(); }  // re-render data in the new language
+}
+document.addEventListener('click',()=>{const m=document.getElementById('langMenu'); if(m) m.classList.remove('open');});
+
+/* Data-string translations. Proper names stay as-is; only descriptive
+   phrases are translated. Missing entries fall back to English via td().
+   For Bemba/Lingala/Luganda, sentence-level data largely remains English
+   and is flagged for native-speaker review (DATA_REVIEW). */
+const DATA_REVIEW=['bem','ln','lg'];
+const DATA_I18N={
+  "Deceased":{sn:"Akafa",xh:"Oswelekileyo",nd:"Osewafa",st:"Ya hlokahetseng",af:"Oorlede",sw:"Marehemu",it:"Defunto"},
+  "Spouse":{sn:"Mukadzi/Murume",xh:"Iqabane",nd:"Umlingani",st:"Molekane",af:"Gade",sw:"Mwenza",it:"Coniuge"},
+  "Daughter":{sn:"Mwanasikana",xh:"Intombi",nd:"Indodakazi",st:"Moradi",af:"Dogter",sw:"Binti",it:"Figlia"},
+  "Son":{sn:"Mwanakomana",xh:"Unyana",nd:"Indodana",st:"Mora",af:"Seun",sw:"Mwana wa kiume",it:"Figlio"},
+  "Grandchild":{sn:"Muzukuru",xh:"Umzukulwana",nd:"Umzukulu",st:"Setloholo",af:"Kleinkind",sw:"Mjukuu",it:"Nipote"},
+  "in-estate":{sn:"munhaka",xh:"kwilifa",nd:"elifeni",st:"lefeng",af:"in boedel",sw:"katika mali",it:"nel patrimonio",bem:"mu fikwatwa",ln:"na bozwi",lg:"mu busika"},
+  "Testator · d. 14 Apr 2026":{sn:"Muiti wewill · afa 14 Kubvumbi 2026",xh:"Umyoleli · usweleke 14 Epreli 2026",nd:"Umenzi wewill · wafa 14 Mabasa 2026",st:"Moetsi wa wili · o hlokahetse 14 Mmesa 2026",af:"Erflater · oorlede 14 Apr 2026",sw:"Mwosia · alifariki 14 Apr 2026",it:"Testatore · dec. 14 apr 2026"},
+  "Married in community of property":{sn:"Vakaroorana muhukama hwepfuma",xh:"Batshate ngokuhlanganisa impahla",nd:"Batshade ngokuhlanganisa impahla",st:"Ba nyalane ka kopano ya thepa",af:"Getroud binne gemeenskap van goedere",sw:"Wameoana kwa pamoja ya mali",it:"Sposati in comunione dei beni"},
+  "Executor of the estate":{sn:"Mutariri wenhaka",xh:"Umlawuli welifa",nd:"Umphathi welifa",st:"Mookamedi wa lefa",af:"Eksekuteur van die boedel",sw:"Msimamizi wa mali",it:"Esecutore del patrimonio"},
+  "Resident in the UK":{sn:"Anogara kuUK",xh:"Uhlala e-UK",nd:"Uhlala e-UK",st:"O dula UK",af:"Woonagtig in die VK",sw:"Anaishi Uingereza",it:"Residente nel Regno Unito"},
+  "Predeceased · share per stirpes":{sn:"Akatanga kufa · mugove per stirpes",xh:"Wasweleka kuqala · isabelo per stirpes",nd:"Wafa kuqala · isabelo per stirpes",st:"O hlokahetse pele · karolo per stirpes",af:"Voor-oorlede · aandeel per stirpes",sw:"Alifariki kabla · sehemu per stirpes",it:"Premorto · quota per stirpe"},
+  "Inherits via late father (Peter)":{sn:"Anopiwa nhaka kuburikidza nababa vakafa (Peter)",xh:"Udla ilifa ngotata oswelekileyo (Peter)",nd:"Udla ilifa ngoyise osewafa (Peter)",st:"O ja lefa ka ntate ya hlokahetseng (Peter)",af:"Erf via oorlede vader (Peter)",sw:"Anarithi kupitia baba marehemu (Peter)",it:"Eredita tramite il padre defunto (Peter)"},
+  "Last Will and Testament — T. Moyo":{sn:"Will Yekupedzisira — T. Moyo",xh:"Umyolelo Wokugqibela — T. Moyo",nd:"IWill Yokucina — T. Moyo",st:"Wili ya ho Qetela — T. Moyo",af:"Laaste Wil en Testament — T. Moyo",sw:"Wosia wa Mwisho — T. Moyo",it:"Ultime Volontà e Testamento — T. Moyo"},
+  "Death Certificate (DHA-1663)":{sn:"Gwaro reRufu (DHA-1663)",xh:"Isatifikethi Sokufa (DHA-1663)",nd:"Isitifiketi Sokufa (DHA-1663)",st:"Setifikeiti sa Lefu (DHA-1663)",af:"Doodsertifikaat (DHA-1663)",sw:"Cheti cha Kifo (DHA-1663)",it:"Certificato di Morte (DHA-1663)"},
+  "Letters of Executorship (J238)":{sn:"Tsamba dzeUtariri (J238)",xh:"Iileta zoLawulo (J238)",nd:"Izincwadi zoBuphathi (J238)",st:"Mangolo a Bookamedi (J238)",af:"Eksekuteursbriewe (J238)",sw:"Barua za Usimamizi (J238)",it:"Lettere di Esecutore (J238)"},
+  "Inventory of Assets (J243)":{sn:"Rondedzero yePfuma (J243)",xh:"Uluhlu lweMpahla (J243)",nd:"Uhlu lwempahla (J243)",st:"Lethathamo la Thepa (J243)",af:"Inventaris van Bates (J243)",sw:"Orodha ya Mali (J243)",it:"Inventario dei Beni (J243)"},
+  "Liquidation & Distribution Account":{sn:"Akaundi yeKupedzisa neKugovera",xh:"Iakhawunti Yokuqhawula Nokwabiwa",nd:"Iakhawunti Yokuqeda Lokwaba",st:"Akhaonto ya Phumantsho le Kabo",af:"Likwidasie- en Distribusierekening",sw:"Akaunti ya Kufilisi na Ugawaji",it:"Conto di Liquidazione e Distribuzione"},
+  "Estate bank statement — May 2026":{sn:"Statimendi yebhangi yenhaka — Chivabvu 2026",xh:"Ingxelo yebhanki yelifa — Meyi 2026",nd:"Isitatimende sebhanga lelifa — Nhlaba 2026",st:"Setatemente sa banka sa lefa — Mmesa 2026",af:"Boedel-bankstaat — Mei 2026",sw:"Taarifa ya benki ya mali — Mei 2026",it:"Estratto conto del patrimonio — mag 2026"},
+  "Heir ID document — please upload":{sn:"Gwaro rechitupa chemugari wenhaka — isai",xh:"Uxwebhu lwesazisi sendlalifa — nceda ulayishe",nd:"Iphepha lomazisi wendlalifa — sicela ulayishe",st:"Tokomane ya boitsebiso ba mojalefa — ka kopo kenya",af:"Erfgenaam-ID-dokument — laai asseblief op",sw:"Hati ya kitambulisho cha mrithi — tafadhali pakia",it:"Documento d'identità dell'erede — carica"},
+  "Estate duty return (REV267)":{sn:"Fomu remutero wenhaka (REV267)",xh:"Imbuyekezo yerhafu yelifa (REV267)",nd:"Umbiko wentela yelifa (REV267)",st:"Phetolelo ya lekgetho la lefa (REV267)",af:"Boedelbelastingopgawe (REV267)",sw:"Marejesho ya ushuru wa mali (REV267)",it:"Dichiarazione imposta di successione (REV267)"},
+  "Welcome letter & process guide":{sn:"Tsamba yekugamuchira & gwara renzira",xh:"Ileta yokwamkela & isikhokelo senkqubo",nd:"Incwadi yokwamukela & umhlahlandlela",st:"Lengolo la kamohelo & tataiso ya tshebetso",af:"Verwelkomingsbrief & prosesgids",sw:"Barua ya karibu & mwongozo wa mchakato",it:"Lettera di benvenuto & guida al processo"},
+  "Primary residence — Sandton":{sn:"Imba huru — Sandton",xh:"Indlu engundoqo — Sandton",nd:"Indlu eyinhloko — Sandton",st:"Lehae le ka sehloohong — Sandton",af:"Primêre woning — Sandton",sw:"Makazi makuu — Sandton",it:"Residenza principale — Sandton"},
+  "Money-market investment":{sn:"Dhumba remari",xh:"Utyalomali lwemarike yemali",nd:"Ukutshalwa kwemali",st:"Matsete a mmaraka wa tjhelete",af:"Geldmarkbelegging",sw:"Uwekezaji wa soko la fedha",it:"Investimento monetario"},
+  "Retirement annuity":{sn:"Penjeni yekuregera basa",xh:"I-anyuwithi yomhlalaphantsi",nd:"Iphenjeni yokuthatha umhlalaphantsi",st:"Penshene ya botsofe",af:"Aftree-annuïteit",sw:"Pensheni ya kustaafu",it:"Rendita pensionistica"},
+  "Life policy":{sn:"Inishuwarenzi yeupenyu",xh:"Ipolisi yobomi",nd:"Iphalisi yempilo",st:"Pholisi ya bophelo",af:"Lewenspolis",sw:"Bima ya maisha",it:"Polizza vita"},
+  "Motor vehicle — Toyota Fortuner":{sn:"Mota — Toyota Fortuner",xh:"Imoto — Toyota Fortuner",nd:"Imota — Toyota Fortuner",st:"Koloi — Toyota Fortuner",af:"Motorvoertuig — Toyota Fortuner",sw:"Gari — Toyota Fortuner",it:"Autoveicolo — Toyota Fortuner"},
+  "Cheque account":{sn:"Akaundi yecheque",xh:"Iakhawunti yetsheki",nd:"Iakhawunti yesheke",st:"Akhaonto ya tjheke",af:"Tjekrekening",sw:"Akaunti ya hundi",it:"Conto corrente"},
+  "Property":{sn:"Pfuma yedzimba",xh:"Ipropati",nd:"Impahla",st:"Thepa",af:"Eiendom",sw:"Mali isiyohamishika",it:"Immobile"},
+  "Investment":{sn:"Dhumba",xh:"Utyalomali",nd:"Ukutshala imali",st:"Matsete",af:"Belegging",sw:"Uwekezaji",it:"Investimento"},
+  "Policy":{sn:"Inishuwarenzi",xh:"Ipolisi",nd:"Iphalisi",st:"Pholisi",af:"Polis",sw:"Bima",it:"Polizza"},
+  "Vehicle":{sn:"Mota",xh:"Isithuthi",nd:"Imota",st:"Koloi",af:"Voertuig",sw:"Gari",it:"Veicolo"},
+  "Bank":{sn:"Bhangi",xh:"Ibhanki",nd:"Ibhanga",st:"Banka",af:"Bank",sw:"Benki",it:"Banca"},
+  "Breeding herd · 3 in-calf":{sn:"Boka rekuberekesa · 3 dzine mimba",xh:"Umhlambi wokuzala · 3 zimithi",nd:"Umhlambi wokuzala · 3 zikhulelwe",st:"Mohlape wa tswalo · 3 di imelwe",af:"Teelkudde · 3 dragtig",sw:"Kundi la kuzalisha · 3 wana mimba",it:"Mandria da riproduzione · 3 gravide"},
+  "Oxen for draught":{sn:"Nzombe dzekurima",xh:"Iinkabi zokutsala",nd:"Iinkabi zokudonsa",st:"Dipholo tsa ho hula",af:"Trekosse",sw:"Maksai ya kukokota",it:"Buoi da tiro"},
+  "Mixed does and kids":{sn:"Nhunzvi nembudzana dzakavhenganiswa",xh:"Iibhokhwe ezisikazi namatakane axubene",nd:"Imbuzi ezisikazi lamazinyane axubene",st:"Dipodi tse tshehadi le manyenyane a kopaneng",af:"Gemengde ooie en lammers",sw:"Mbuzi majike na wadogo waliochanganyika",it:"Capre femmine e capretti misti"},
+  "Wool clip due Sept":{sn:"Kuvheyiwa kweboya muna Gunyana",xh:"Ukuchetywa koboya ngoSeptemba",nd:"Ukugundwa koboya ngoMpandula",st:"Ho kutwa ha boya ka Loetse",af:"Wolskeer in September verwag",sw:"Ukataji wa sufu mwezi Sep",it:"Tosatura della lana a settembre"},
+  "Family kraal, Lekgalong":{sn:"Danga remhuri, Lekgalong",xh:"Ibuhlanti losapho, Lekgalong",nd:"Isibaya somuli, Lekgalong",st:"Lesaka la lelapa, Lekgalong",af:"Familiekraal, Lekgalong",sw:"Zizi la familia, Lekgalong",it:"Recinto di famiglia, Lekgalong"},
+  "Communal land":{sn:"Nyika yemuruwa",xh:"Umhlaba woluntu",nd:"Umhlaba womphakathi",st:"Naha ya setjhaba",af:"Gemeenskaplike grond",sw:"Ardhi ya jamii",it:"Terra comunitaria"},
+  "Leased grazing, Brits":{sn:"Mafuro akakwiretswa, Brits",xh:"Idlelo eliqeshisiweyo, Brits",nd:"Idlelo eliqatshisiweyo, Brits",st:"Makgulo a hiriloeng, Brits",af:"Gehuurde weiding, Brits",sw:"Malisho ya kukodi, Brits",it:"Pascolo in affitto, Brits"},
+  "Cousin J. Moyo":{af:"Neef J. Moyo",it:"Cugino J. Moyo",sw:"Binamu J. Moyo",sn:"Hama J. Moyo",xh:"Umzala J. Moyo",nd:"Umzawami J. Moyo",st:"Motswala J. Moyo"},
+  "Tenant farmer":{sn:"Murimi anorenda",xh:"Umlimi oqeshisayo",nd:"Umlimi oqatshisiweyo",st:"Molemi ya hirileng",af:"Huurboer",sw:"Mkulima mpangaji",it:"Agricoltore affittuario"},
+  "Two calves born to the Nguni herd":{sn:"Mhuru mbiri dzakaberekwa muboka reNguni",xh:"Amathole amabini azalwa kumhlambi weNguni",nd:"Amankonyana amabili azalwa emhlanjini weNguni",st:"Manamane a mabedi a tswetswe mohlapeng wa Nguni",af:"Twee kalwers in die Nguni-kudde gebore",sw:"Ndama wawili wamezaliwa katika kundi la Nguni",it:"Due vitelli nati nella mandria Nguni"},
+  "Verified head count at site visit":{sn:"Kuverengwa kwehuwandu pakushanyira nzvimbo",xh:"Kuqinisekiswe inani ngotyelelo lwendawo",nd:"Kuqinisekiswe inani ngokuvakatsha indawo",st:"Palo e netefaditswe ka ketelo ya sebaka",af:"Telling bevestig tydens terreinbesoek",sw:"Idadi imethibitishwa wakati wa ziara",it:"Conteggio verificato durante il sopralluogo"},
+  "One kid lost to illness":{sn:"Mbudzana imwe yakafa nechirwere",xh:"Itakane elinye lasweleka sisifo",nd:"Izinyane elilodwa lafa ngumkhuhlane",st:"Konyana e le nngwe e lahlehile ka lefu",af:"Een lam aan siekte verloor",sw:"Mwana mmoja amepotea kwa ugonjwa",it:"Un capretto perso per malattia"},
+  "Counted with tenant farmer":{sn:"Zvakaverengwa nemurimi anorenda",xh:"Kubalwe kunye nomlimi oqeshisayo",nd:"Kubalwe lomlimi oqatshisiweyo",st:"Di balilwe le molemi ya hirileng",af:"Saam met huurboer getel",sw:"Wamehesabiwa na mkulima mpangaji",it:"Contati con l'agricoltore affittuario"},
+};
+function td(s){
+  if(s==null) return s;
+  if(LANG==='en') return s;
+  const e=DATA_I18N[s];
+  if(e && e[LANG]) return e[LANG];
+  return s;
+}
+
+
+let MATTER = new URLSearchParams(location.search).get('ref') || 'EST-2026-014';
+let ME=null, summary=null, family=[], docs=[], assets=null, livestock=null, docFilterCat='All';
+const ESC = s => (s==null?'':String(s)).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const initials = n => n.split(' ').map(w=>w[0]).slice(0,2).join('');
+
+function toggleTheme(){
+  const el=document.documentElement, dark=el.getAttribute('data-theme')==='dark';
+  el.setAttribute('data-theme', dark?'light':'dark');
+  document.getElementById('themeIcon').innerHTML = dark
+    ? '<path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/>'
+    : '<circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/>';
+}
+async function api(path, opts){
+  if(!API) throw new Error('offline');
+  opts = opts || {};
+  opts.credentials = 'same-origin';
+  if(!(opts.body instanceof FormData)){
+    opts.headers = Object.assign({'Content-Type':'application/json'}, opts.headers||{});
+  }
+  const r = await fetch(API+path, opts);
+  if(r.status===401){ location.href='/login?next=/portal'; throw new Error('unauthorized'); }
+  if(!r.ok){ let m='HTTP '+r.status; try{m=(await r.json()).error||m;}catch(e){} throw new Error(m); }
+  return r.json();
+}
+function setConn(ok){document.getElementById('conn').innerHTML = ok
+  ? '<span class="dot" style="background:var(--green)"></span> Secure · connected'
+  : '<span class="dot" style="background:var(--amber)"></span> Demo · offline data';}
+
+function loadDemo(){
+  summary={ref:'EST-2026-014',name:'Estate Late T. Moyo',type:'Deceased Estate',attorney:'R. Chingono',
+    master:'Master Joburg',status:'lr',status_label:'L&R Filed',progress:72,steps_done:7,steps_total:10,
+    next_step:'L&R advertised — 21-day inspection period',documents_total:9,documents_action:1,family_total:7,
+    firm_mailbox:'tumai@frnfadvisors.co.za',
+    checklist:[
+      {title:'Death notice & death certificate obtained',note:'Form J294 lodged',done:1},
+      {title:'Original will located & validity confirmed',note:'Section 2(1) Wills Act',done:1},
+      {title:'Estate reported to Master within 14 days',note:'Master Johannesburg',done:1},
+      {title:'Letters of Executorship issued',note:'Form J238 received',done:1},
+      {title:'Estate bank account opened',note:'Trust → estate transfer',done:1},
+      {title:'Inventory of assets & liabilities compiled',note:'Form J243',done:1},
+      {title:'Liquidation & Distribution account drafted',note:'Within 6 months',done:1},
+      {title:'L&R advertised — 21-day inspection period',note:'Govt Gazette + local press',done:0},
+      {title:'Estate duty return submitted (REV267)',note:'SARS',done:0},
+      {title:'Distribution to heirs & final discharge',note:"Master's filing slip",done:0},
+    ]};
+  family=[
+    {id:1,name:'Thomas Moyo',relation:'Deceased',status:'deceased',generation:0,parent_id:null,spouse_id:2,share:'—',note:'Testator · d. 14 Apr 2026'},
+    {id:2,name:'Sarah Moyo',relation:'Spouse',status:'living',generation:0,parent_id:null,spouse_id:1,share:'1/3',note:'Married in community of property'},
+    {id:3,name:'Gugu Moyo',relation:'Daughter',status:'living',generation:1,parent_id:1,spouse_id:null,share:'2/9',note:'Executor of the estate'},
+    {id:4,name:'Daniel Moyo',relation:'Son',status:'living',generation:1,parent_id:1,spouse_id:null,share:'2/9',note:'Resident in the UK'},
+    {id:5,name:'Peter Moyo',relation:'Son',status:'deceased',generation:1,parent_id:1,spouse_id:null,share:'2/9',note:'Predeceased · share per stirpes'},
+    {id:6,name:'Lerato Moyo',relation:'Grandchild',status:'living',generation:2,parent_id:5,spouse_id:null,share:'1/9',note:'Inherits via late father (Peter)'},
+    {id:7,name:'Sipho Moyo',relation:'Grandchild',status:'living',generation:2,parent_id:5,spouse_id:null,share:'1/9',note:'Inherits via late father (Peter)'},
+  ];
+  docs=[
+    {id:7,title:'Heir ID document — please upload',category:'Identity',filename:null,size_kb:0,status:'action-required',uploaded_by:'Client',uploaded_at:null},
+    {id:8,title:'Estate duty return (REV267)',category:'Court',filename:null,size_kb:0,status:'pending',uploaded_by:'Firm',uploaded_at:null},
+    {id:1,title:'Last Will and Testament — T. Moyo',category:'Will',filename:'moyo-will-2024.pdf',size_kb:486,status:'available',uploaded_by:'Firm',uploaded_at:'2026-04-22'},
+    {id:3,title:'Letters of Executorship (J238)',category:'Court',filename:'j238-letters-executorship.pdf',size_kb:340,status:'available',uploaded_by:'Firm',uploaded_at:'2026-05-06'},
+    {id:4,title:'Inventory of Assets (J243)',category:'Estate',filename:'j243-inventory.pdf',size_kb:298,status:'available',uploaded_by:'Firm',uploaded_at:'2026-05-18'},
+    {id:5,title:'Liquidation & Distribution Account',category:'Estate',filename:'moyo-LR-account-draft.pdf',size_kb:654,status:'available',uploaded_by:'Firm',uploaded_at:'2026-06-02'},
+    {id:6,title:'Estate bank statement — May 2026',category:'Financial',filename:'estate-stmt-2026-05.pdf',size_kb:180,status:'available',uploaded_by:'Firm',uploaded_at:'2026-06-03'},
+    {id:2,title:'Death Certificate (DHA-1663)',category:'Identity',filename:'moyo-death-cert.pdf',size_kb:212,status:'available',uploaded_by:'Firm',uploaded_at:'2026-04-20'},
+    {id:9,title:'Welcome letter & process guide',category:'Correspondence',filename:'moyo-welcome-pack.pdf',size_kb:128,status:'available',uploaded_by:'Firm',uploaded_at:'2026-04-23'},
+  ];
+  assets={total:8250000,currency:'ZAR',items:[
+    {id:1,name:'Primary residence — Sandton',type:'Property',institution:'Deeds Office',value:4200000,currency:'ZAR',note:'34 Acacia Road · Bond settled'},
+    {id:2,name:'Money-market investment',type:'Investment',institution:'Allan Gray',value:1640000,currency:'ZAR',note:'Unit trust portfolio'},
+    {id:3,name:'Retirement annuity',type:'Policy',institution:'Old Mutual',value:980000,currency:'ZAR',note:'Beneficiary nomination on file'},
+    {id:4,name:'Life policy',type:'Policy',institution:'Sanlam',value:750000,currency:'ZAR',note:'Pays to estate'},
+    {id:5,name:'Motor vehicle — Toyota Fortuner',type:'Vehicle',institution:'—',value:393500,currency:'ZAR',note:'2022 model'},
+    {id:6,name:'Cheque account',type:'Bank',institution:'Standard Bank',value:286500,currency:'ZAR',note:'Frozen pending Letters'},
+  ]};
+  livestock={currency:'ZAR',summary:{by_species:[{species:'Cattle',head:30,value:420000},{species:'Goats',head:41,value:73800},{species:'Sheep',head:18,value:39600}],total_head:89,total_value:533400},
+    items:[
+      {id:1,species:'Cattle',breed:'Nguni',head_count:24,unit_value:13500,value:324000,currency:'ZAR',earmark:'TM-left-notch',location:'Family kraal, Lekgalong',custodian:'Cousin J. Moyo',status:'in-estate',note:'Breeding herd · 3 in-calf',events:[{event_type:'birth',delta:2,detail:'Two calves born to the Nguni herd',event_date:'2026-05-02'},{event_type:'count-adjust',delta:0,detail:'Verified head count at site visit',event_date:'2026-05-12'}]},
+      {id:2,species:'Cattle',breed:'Brahman cross',head_count:6,unit_value:16000,value:96000,currency:'ZAR',earmark:'TM-left-notch',location:'Family kraal, Lekgalong',custodian:'Cousin J. Moyo',status:'in-estate',note:'Oxen for draught',events:[]},
+      {id:3,species:'Goats',breed:'Boer',head_count:41,unit_value:1800,value:73800,currency:'ZAR',earmark:'ear-tag blue',location:'Communal land',custodian:'Cousin J. Moyo',status:'in-estate',note:'Mixed does and kids',events:[{event_type:'death',delta:-1,detail:'One kid lost to illness',event_date:'2026-05-20'}]},
+      {id:4,species:'Sheep',breed:'Dorper',head_count:18,unit_value:2200,value:39600,currency:'ZAR',earmark:'ear-tag green',location:'Leased grazing, Brits',custodian:'Tenant farmer',status:'in-estate',note:'Wool clip due Sept',events:[{event_type:'count-adjust',delta:0,detail:'Counted with tenant farmer',event_date:'2026-05-18'}]},
+    ]};
+  summary.assets_total=assets.total; summary.assets_count=assets.items.length;
+  summary.livestock_head=livestock.summary.total_head; summary.livestock_value=livestock.summary.total_value;
+  ME={name:'Gugu Moyo',role:'client',relation:'Executor'};
+}
+async function hydrate(){
+  if(!API){ loadDemo(); setConn(false); return; }
+  // require auth; resolve the matter from the signed-in user (clients can't pick)
+  const meResp = await fetch(API+'/me',{credentials:'same-origin'});
+  ME = (await meResp.json()).user;
+  if(!ME){ location.href='/login?next=/portal'; return; }
+  if(ME.role==='client' && ME.matter_ref) MATTER = ME.matter_ref;
+  try{
+    const [s,f,d,a,l]=await Promise.all([
+      api('/portal/'+MATTER), api('/portal/'+MATTER+'/family'), api('/portal/'+MATTER+'/documents'),
+      api('/matters/'+MATTER+'/assets'), api('/matters/'+MATTER+'/livestock')]);
+    summary=s;family=f;docs=d;assets=a;livestock=l;setConn(true);
+  }catch(e){ console.warn('portal load failed:',e.message); loadDemo(); setConn(false); }
+}
+function fmtSize(kb){return kb>=1024?(kb/1024).toFixed(1)+' MB':kb+' KB'}
+function fmtDate(s){if(!s)return '';const d=new Date(s);return isNaN(d)?s:d.toLocaleDateString('en-ZA',{day:'numeric',month:'short',year:'numeric'})}
+
+function renderHero(){
+  const nm = (ME && ME.name) ? ME.name : ((family.find(m=>/executor/i.test(m.note||''))||family[0]||{name:'Client'}).name);
+  document.getElementById('greetName').textContent=nm;
+  document.getElementById('profName').textContent=nm;
+  document.getElementById('profPic').textContent=initials(nm);
+  document.getElementById('profId').textContent=(ME&&ME.relation? ME.relation+' · ':'')+'Matter '+summary.ref;
+  document.getElementById('famCount').textContent=summary.family_total+' family members';
+  document.getElementById('estPC').textContent=summary.progress+'%';
+  setTimeout(()=>document.getElementById('estBar').style.width=summary.progress+'%',120);
+  document.getElementById('estNext').textContent=summary.next_step;
+  const mail=summary.firm_mailbox;
+  document.getElementById('legalMail').textContent=mail;
+  document.getElementById('legalMail2').textContent=mail;
+  document.getElementById('legalAtt2').textContent=summary.attorney;
+  document.getElementById('legalMailBtn').onclick=()=>location.href='mailto:'+mail;
+  const wd=docs.find(x=>x.category==='Will'&&x.uploaded_at)||docs.find(x=>x.uploaded_at);
+  document.getElementById('reviewDate').textContent=wd?fmtDate(wd.uploaded_at):'—';
+  const nb=document.getElementById('navDocBadge');
+  if(summary.documents_action>0){nb.style.display='grid';nb.textContent=summary.documents_action;}else nb.style.display='none';
+  const action=docs.find(d=>d.status==='action-required');
+  if(action){const b=document.getElementById('banner');b.style.display='block';b.innerHTML='<b>'+t('required_you')+':</b> '+ESC(td(action.title))+' — '+t('nav_docs')+'.';}
+}
+function renderTiles(){
+  const willCount=docs.filter(d=>['Will','Court','Estate'].includes(d.category)&&d.status==='available').length;
+  const assetsTotal = summary.assets_total!=null ? summary.assets_total : (assets?assets.total:0);
+  const lsHead = summary.livestock_head!=null ? summary.livestock_head : (livestock?livestock.summary.total_head:0);
+  const tiles=[
+    {ic:'<path d="M6 3h8l5 5v13H6z"/><path d="M14 3v5h5"/>',num:willCount,lab:t('will_documents'),meta:t('last_updated')+' '+document.getElementById('reviewDate').textContent,view:'docs',link:t('view_documents')},
+    {ic:'<path d="M3 21h18M5 21V9l7-5 7 5v12"/>',num:summary.assets_count!=null?summary.assets_count:(assets?assets.items.length:0),lab:t('accounts_assets'),meta:t('total')+' '+ZARk(assetsTotal),view:'assets',link:t('view_accounts')},
+    {ic:'<path d="M4 9c0-1 1-2 2-2 1 0 1 1 2 1s1-1 2-1 1 1 2 1 1-1 2-1 1 1 2 1 1-1 2-1c1 0 2 1 2 2 0 3-2 5-2 7H6c0-2-2-4-2-7z"/><path d="M7 16v3M17 16v3M10 16v2M14 16v2"/>',num:lsHead,lab:t('livestock_lbl'),meta:livestock?livestock.summary.by_species.map(s=>t('sp_'+s.species)[0]+s.head).join(' · '):'',view:'livestock',link:t('view_register')},
+    {ic:'<circle cx="9" cy="8" r="3"/><path d="M3 20a6 6 0 0112 0M17 6a3 3 0 010 6"/>',num:summary.family_total,lab:t('beneficiaries_lbl'),meta:t('people_included'),view:'family',link:t('view_beneficiaries')},
+  ];
+  document.getElementById('tiles').innerHTML=tiles.map(x=>`<div class="tile"><div class="ti"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">${x.ic}</svg></div>
+    <div class="num">${x.num}</div><div class="lab">${x.lab}</div><div class="meta">${ESC(x.meta)}</div>
+    <div class="link" onclick="go('${x.view}')">${x.link} <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div></div>`).join('');
+}
+function renderJourney(){
+  const items=summary.checklist||[];let set=false;
+  document.getElementById('journey').innerHTML=items.map(it=>{
+    const done=!!it.done;let cls=done?'done':'';if(!done&&!set){cls='current';set=true;}
+    const tag=cls==='current'?'<div class="jtag">'+t('next_step').replace(':','')+'</div>':'';
+    return `<div class="jrow ${cls}"><div class="rail"><div class="jdot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l4 4 10-10"/></svg></div><div class="jline"></div></div>
+      <div class="jbody"><div class="t">${ESC(td(it.title))}</div>${it.note?`<div class="n">${ESC(td(it.note))}</div>`:''}${tag}</div></div>`;
+  }).join('');
+}
+function lifeDot(s){return `<span class="lifedot" style="background:${s==='deceased'?'var(--txt-faint)':'var(--green)'}"></span>`}
+function nodeHTML(m){return `<div class="node ${m.status==='deceased'?'deceased gone':''}">
+  ${m.share&&m.share!=='—'?`<div class="shr">${ESC(m.share)}</div>`:''}
+  <div class="nm">${lifeDot(m.status)}${ESC(m.name)}</div><div class="rel">${ESC(td(m.relation))}</div>
+  ${m.note?`<div class="nt">${ESC(td(m.note))}</div>`:''}</div>`;}
+function renderTree(){
+  const gens={};family.forEach(m=>{(gens[m.generation]=gens[m.generation]||[]).push(m)});
+  document.getElementById('tree').innerHTML=Object.keys(gens).sort((a,b)=>a-b).map(g=>{
+    const members=gens[g],used=new Set();let cells='';
+    members.forEach(m=>{if(used.has(m.id))return;const sp=m.spouse_id&&members.find(x=>x.id===m.spouse_id);
+      if(sp){used.add(m.id);used.add(sp.id);cells+=`<div class="spouse-link">${nodeHTML(m)}${nodeHTML(sp)}</div>`;}
+      else{used.add(m.id);cells+=nodeHTML(m);}});
+    return `<div class="gen">${cells}</div>`;}).join('');
+}
+
+/* ---- currency + assets + livestock ---- */
+function ZAR(n){return 'R\u00a0'+Number(n||0).toLocaleString('en-ZA')}
+function ZARk(n){n=Number(n||0);return n>=1e6?('R\u00a0'+(n/1e6).toFixed(2)+'m'):ZAR(n)}
+const ASSET_ICON={Property:'<path d="M3 21h18M5 21V9l7-5 7 5v12M9 21v-6h6v6"/>',
+  Bank:'<rect x="3" y="8" width="18" height="12" rx="1"/><path d="M3 8l9-5 9 5M7 12v4M12 12v4M17 12v4"/>',
+  Investment:'<path d="M4 18l5-5 3 3 7-8"/><path d="M14 8h6v6"/>',
+  Policy:'<path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/>',
+  Vehicle:'<path d="M5 16l1-5h12l1 5M3 16h18v3H3z"/><circle cx="7" cy="19" r="1.5"/><circle cx="17" cy="19" r="1.5"/>',
+  Other:'<circle cx="12" cy="12" r="9"/>'};
+function renderAssets(){
+  if(!assets){document.getElementById('assetsList').innerHTML='';return;}
+  document.getElementById('assetsTotal').textContent=ZAR(assets.total);
+  document.getElementById('assetsList').innerHTML=assets.items.map(a=>{
+    const ic=ASSET_ICON[a.type]||ASSET_ICON.Other;
+    return `<div class="asset-row"><div class="asset-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">${ic}</svg></div>
+      <div class="grow"><div class="an">${ESC(td(a.name))}</div><div class="am">${ESC([a.institution,td(a.note)].filter(Boolean).join(' · '))}</div></div>
+      <span class="atype">${ESC(td(a.type))}</span><div class="av">${ZAR(a.value)}</div></div>`;
+  }).join('')||'<div style="text-align:center;color:var(--txt-faint);padding:30px">No assets recorded yet.</div>';
+}
+const SPECIES_ICON='<path d="M4 9c0-1 1-2 2-2 1 0 1 1 2 1s1-1 2-1 1 1 2 1 1-1 2-1 1 1 2 1 1-1 2-1c1 0 2 1 2 2 0 3-2 5-2 7H6c0-2-2-4-2-7z"/><path d="M7 16v3M17 16v3M10 16v2M14 16v2"/>';
+const EVENT_KEY={birth:'ev_birth',death:'ev_death',sale:'ev_sale',transfer:'ev_transfer','count-adjust':'ev_count'};
+function renderLivestock(){
+  if(!livestock){document.getElementById('lsList').innerHTML='';return;}
+  const sm=livestock.summary;
+  document.getElementById('lsTotal').textContent=ZAR(sm.total_value);
+  // species summary cards
+  const order=['Cattle','Goats','Sheep'];
+  const cards=order.map(sp=>{
+    const row=sm.by_species.find(s=>s.species===sp)||{species:sp,head:0,value:0};
+    return `<div class="ls-card"><div class="lsi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">${SPECIES_ICON}</svg></div>
+      <div class="lh">${row.head}</div><div class="lsp">${t('sp_'+row.species)}</div><div class="lv">${ZAR(row.value)}</div></div>`;
+  }).join('');
+  document.getElementById('lsSummary').innerHTML=cards;
+  // herd records
+  document.getElementById('lsList').innerHTML=livestock.items.map(h=>{
+    const evs=(h.events||[]).slice(0,4).map(e=>{
+      const d=e.delta>0?'pos':(e.delta<0?'neg':'');
+      const ds=e.delta>0?('+'+e.delta):(e.delta<0?(''+e.delta):'·');
+      return `<div class="ev"><span class="evd">${fmtDate(e.event_date)}</span><span class="grow">${t(EVENT_KEY[e.event_type]||e.event_type)} — ${ESC(td(e.detail||''))}</span><span class="evdelta ${d}">${ds}</span></div>`;
+    }).join('');
+    const statusLabel = t(h.status) !== h.status ? t(h.status) : h.status.replace('-',' ');
+    return `<div class="herd"><div class="htop">
+      <div class="hic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">${SPECIES_ICON}</svg></div>
+      <div class="grow"><div class="hname">${t('sp_'+h.species)} — ${ESC(h.breed||'')}</div>
+        <div class="hsub">${ESC(td(h.note||''))}</div>
+        <div class="hmeta">
+          <span class="statustag ${h.status}">${ESC(statusLabel)}</span>
+          <span class="chiplet"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 21s-7-5-7-11a7 7 0 0114 0c0 6-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>${ESC(td(h.location||'—'))}</span>
+          <span class="chiplet"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="8" r="3"/><path d="M5 20a7 7 0 0114 0"/></svg>${ESC(td(h.custodian||'—'))}</span>
+          <span class="chiplet"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M7 7h10v10H7z"/></svg>${ESC(h.earmark||'—')}</span>
+        </div></div>
+      <div class="hval"><div class="hh">${h.head_count}</div><div class="hsm">${t('head')} · ${ZAR(h.unit_value)}${t('per_head')}</div><div class="hsm" style="color:var(--gold);font-weight:600">${ZAR((h.value!=null?h.value:h.head_count*h.unit_value))}</div></div>
+    </div>
+    ${evs?`<div class="hevents"><div class="het">${t('recent_moves')}</div>${evs}</div>`:''}
+    </div>`;
+  }).join('')||'<div style="text-align:center;color:var(--txt-faint);padding:30px">—</div>';
+}
+const CATICON={Will:'<path d="M12 3v18M5 7h14M7 7l-3 6h6zM17 7l-3 6h6z"/>',
+  Identity:'<rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2"/><path d="M13 9h4M13 13h4"/>',
+  Court:'<path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/>',
+  Estate:'<path d="M3 21h18M5 21V9l7-5 7 5v12M9 21v-6h6v6"/>',
+  Financial:'<path d="M12 3v18M7 8h7a3 3 0 010 6H7"/>',
+  Correspondence:'<path d="M4 5h16v14H4z"/><path d="M4 7l8 6 8-6"/>'};
+function renderDocFilter(){
+  const cats=['All',...Array.from(new Set(docs.map(d=>d.category)))];
+  document.getElementById('docfilter').innerHTML=cats.map(c=>`<button class="${c===docFilterCat?'active':''}" onclick="setDocFilter('${c}')">${c==='All'?t('all'):ESC(c)}</button>`).join('');
+}
+function setDocFilter(c){docFilterCat=c;renderDocFilter();renderDocs();}
+function renderDocs(){
+  const list=docs.filter(d=>docFilterCat==='All'||d.category===docFilterCat);
+  document.getElementById('doclist').innerHTML=list.map(d=>{
+    const ic=CATICON[d.category]||CATICON.Correspondence;let right;
+    if(d.status==='action-required')right=`<button class="docbtn req" onclick="doUpload('${ESC(d.title)}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M5 20h14"/></svg>${t('upload')}</button>`;
+    else if(d.status==='pending')right=`<span class="statpill pending">${t('awaiting')}</span>`;
+    else right=`<button class="docbtn" onclick="viewDoc(${d.id},'${ESC(d.filename||'')}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v12M7 12l5 5 5-5"/><path d="M5 20h14"/></svg>${t('download')}</button>`;
+    const meta=d.status==='available'?`${ESC(d.filename||'')} · ${fmtSize(d.size_kb)} · ${t('added')} ${fmtDate(d.uploaded_at)} ${t('by')} ${ESC(d.uploaded_by)}`:(d.status==='pending'?t('being_prepared'):t('required_you'));
+    return `<div class="doc"><div class="docicon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">${ic}</svg></div>
+      <div class="grow"><div class="dt">${ESC(td(d.title))}</div><div class="dm">${meta}</div></div><span class="cat">${ESC(d.category)}</span>${right}</div>`;
+  }).join('')||'<div style="text-align:center;color:var(--txt-faint);padding:30px">—</div>';
+}
+function viewDoc(id, fn){
+  if(!API){ alert('Opening "'+fn+'".\n\nIn the live system this securely streams the document from your estate file.'); return; }
+  window.open(API+'/documents/'+id+'/download','_blank');
+}
+// hidden file input drives real uploads
+let pendingUploadTitle=null;
+const fileInput=document.createElement('input');
+fileInput.type='file'; fileInput.style.display='none';
+fileInput.accept='.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.rtf,.csv,.odt,.ods,.jpg,.jpeg,.png,.gif,.webp,.heic,.tif,.tiff';
+document.body.appendChild(fileInput);
+fileInput.addEventListener('change', async ()=>{
+  const f=fileInput.files[0]; if(!f) return;
+  const title=pendingUploadTitle && pendingUploadTitle!=='New document'
+    ? pendingUploadTitle.replace(/—.*$/,'').trim() : f.name;
+  if(!API){ // offline demo
+    const idx=docs.findIndex(d=>d.title===pendingUploadTitle); if(idx>=0)docs.splice(idx,1);
+    docs.unshift({id:Date.now(),title:title,category:'Identity',filename:f.name,size_kb:Math.max(1,Math.round(f.size/1024)),status:'available',uploaded_by:'Client',uploaded_at:new Date().toISOString().slice(0,10)});
+    summary.documents_action=Math.max(0,summary.documents_action-1);renderAll();flash('Document uploaded — thank you.');
+    fileInput.value=''; return;
+  }
+  const fd=new FormData(); fd.append('file',f); fd.append('title',title); fd.append('category','Identity');
+  try{ await api('/portal/'+MATTER+'/documents',{method:'POST',body:fd}); await hydrate(); renderAll(); flash('Document uploaded — thank you.'); }
+  catch(e){ alert('Upload failed: '+e.message); }
+  fileInput.value='';
+});
+function doUpload(title){ pendingUploadTitle=title; fileInput.click(); }
+function flash(msg){const b=document.getElementById('banner');b.style.display='block';
+  b.style.background='rgba(63,157,119,.12)';b.style.borderColor='rgba(63,157,119,.35)';b.style.color='var(--green)';
+  b.innerHTML='<b>✓</b> '+ESC(msg);setTimeout(()=>{b.style.display='none';b.removeAttribute('style');},3500);}
+document.getElementById('uploadZone').addEventListener('click',()=>doUpload('New document'));
+
+async function doLogout(){
+  if(API){ try{ await fetch(API+'/auth/logout',{method:'POST',credentials:'same-origin'}); }catch(e){} location.href='/login'; return; }
+  flash(LANG==='en'?'This is an offline demo — sign-out is disabled here.':'Demo');
+}
+document.getElementById('logoutBtn').addEventListener('click',doLogout);
+
+/* ---- Digital twin: top-down schematic map of the holding ---- */
+// Fixed zones for the demo holding; herds map onto zones by their location text.
+const TWIN_ZONES=[
+  {id:'kraal', label:'Kraal',     x:60,  y:230, w:150, h:150, fill:'#d8c39a', match:/kraal/i},
+  {id:'camp1', label:'Camp A',    x:230, y:60,  w:200, h:150, fill:'#bcd49a', match:/communal/i},
+  {id:'camp2', label:'Camp B',    x:230, y:230, w:200, h:150, fill:'#c9dca6', match:/grazing|brits/i},
+  {id:'water', label:'Water',     x:450, y:150, w:90,  h:110, fill:'#9ec7e0', match:null},
+];
+const SPECIES_COLOR={Cattle:'#8a6f3f',Goats:'#c19c59',Sheep:'#5c7a52'};
+let twinSelected=null;
+function zoneForHerd(h){
+  for(const z of TWIN_ZONES){ if(z.match && z.match.test(h.location||'')) return z; }
+  return TWIN_ZONES[0];
+}
+function renderTwin(){
+  if(!livestock){return;}
+  const W=560,H=440;
+  // group herds by zone, position markers within the zone
+  const placed=[];
+  TWIN_ZONES.forEach(z=>{
+    const herds=livestock.items.filter(h=>zoneForHerd(h).id===z.id);
+    herds.forEach((h,i)=>{
+      const cols=Math.min(herds.length,2);
+      const cx=z.x + z.w*( (i%cols+1)/(cols+1) );
+      const cy=z.y + z.h*( (Math.floor(i/cols)+1)/(Math.floor(herds.length/cols)+2) );
+      placed.push({h,cx,cy,z});
+    });
+  });
+  const zonesSvg=TWIN_ZONES.map(z=>`
+    <g>
+      <rect x="${z.x}" y="${z.y}" width="${z.w}" height="${z.h}" rx="10" fill="${z.fill}" fill-opacity="0.55" stroke="rgba(0,0,0,0.12)"/>
+      <text class="zone-label" x="${z.x+10}" y="${z.y+18}" fill="rgba(20,30,60,0.6)">${z.id==='kraal'?'⌂ ':''}${z.id==='water'?'≈ ':''}${ESC(z.label)}</text>
+    </g>`).join('');
+  // fences / path between kraal and camps
+  const paths=`<path d="M210 305 L230 305 M210 150 Q220 150 230 135" stroke="rgba(120,90,40,0.4)" stroke-width="3" stroke-dasharray="5 5" fill="none"/>`;
+  const markers=placed.map((p,idx)=>{
+    const col=SPECIES_COLOR[p.h.species]||'#8a6f3f';
+    const sel = twinSelected===p.h.id ? 'stroke="#1b2a55" stroke-width="2.5"' : 'stroke="#fff" stroke-width="2"';
+    return `<g class="twin-marker" onclick="selectTwin(${p.h.id})" transform="translate(${p.cx},${p.cy})">
+      <circle r="20" fill="${col}" ${sel}/>
+      <text y="-2" text-anchor="middle" font-size="9" fill="#fff" font-weight="700">${t('sp_'+p.h.species).slice(0,4)}</text>
+      <text y="10" text-anchor="middle" font-size="11" fill="#fff" font-weight="700">${p.h.head_count}</text>
+    </g>`;
+  }).join('');
+  const water=`<g transform="translate(495,205)"><circle r="14" fill="#5b9bd0" stroke="#fff" stroke-width="2"/><path d="M-5 0 Q0 -6 5 0 Q0 6 -5 0" fill="#fff" opacity=".8"/></g>`;
+  document.getElementById('twinMap').innerHTML=`<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet">
+    <rect x="0" y="0" width="${W}" height="${H}" fill="none"/>
+    ${zonesSvg}${paths}${water}${markers}</svg>`;
+  // side panel
+  const total=livestock.summary.total_head;
+  let info;
+  if(twinSelected){
+    const h=livestock.items.find(x=>x.id===twinSelected);
+    const col=SPECIES_COLOR[h.species]||'#8a6f3f';
+    info=`<div class="twin-info">
+      <div class="tih"><span class="sw" style="background:${col}"></span>${t('sp_'+h.species)} — ${ESC(h.breed||'')}</div>
+      <div class="tirow"><span>${t('head')}</span><b>${h.head_count}</b></div>
+      <div class="tirow"><span>${t('location')}</span><b>${ESC(td(h.location||'—'))}</b></div>
+      <div class="tirow"><span>${t('custodian')}</span><b>${ESC(td(h.custodian||'—'))}</b></div>
+      <div class="tirow"><span>${t('earmark')}</span><b>${ESC(h.earmark||'—')}</b></div>
+      <div class="tirow"><span>${t('value')}</span><b>${ZAR(h.value!=null?h.value:h.head_count*h.unit_value)}</b></div>
+      <div class="tihint">${ESC(td(h.note||''))}</div></div>`;
+  }else{
+    info=`<div class="twin-info"><div class="tih">${t('twin_live')}</div><div class="tihint">${t('twin_tap')}</div></div>`;
+  }
+  document.getElementById('twinSide').innerHTML=
+    `<div class="twin-stat"><div class="tsh">${t('twin_total_head')}</div><div class="tsv">${total}</div></div>`+
+    `<div class="twin-stat"><div class="tsh">${t('twin_zones')}</div><div class="tsv">3</div></div>`+
+    info;
+  // legend
+  document.getElementById('twinLegend').innerHTML=
+    ['Cattle','Goats','Sheep'].map(s=>`<span><span class="sw" style="background:${SPECIES_COLOR[s]}"></span>${t('sp_'+s)}</span>`).join('')+
+    `<span><span class="sw" style="background:#5b9bd0"></span>${t('twin_water')}</span>`+
+    `<span><span class="sw" style="background:#d8c39a"></span>${t('nav_livestock')} ⌂</span>`;
+}
+function selectTwin(id){ twinSelected=(twinSelected===id?null:id); renderTwin(); }
+
+function renderAll(){renderHero();renderTiles();renderJourney();renderTree();renderAssets();renderLivestock();renderTwin();renderDocFilter();renderDocs();}
+function go(v){
+  document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('active',b.dataset.view===v));
+  document.querySelectorAll('.view').forEach(s=>s.classList.toggle('show',s.dataset.v===v));
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+document.getElementById('nav').addEventListener('click',e=>{const b=e.target.closest('button');if(b&&b.dataset.view)go(b.dataset.view)});
+
+// boot: restore saved language, build menu, translate chrome, then render
+try{ const saved=localStorage.getItem('crm_lang'); if(saved && I18N[saved]) LANG=saved; }catch(_){}
+buildLangMenu(); applyI18n();
+(async function(){ await hydrate(); renderAll(); })();
+</script>
+</body>
+</html>
